@@ -1,0 +1,56 @@
+{
+  "name": "threeVP",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "threeVP core",
+  "keywords": [
+    "three.js", "WebGL", "Viewport"
+  ],
+  "author": "i3ernie",
+  
+  "contributors": [],
+    
+  "dependencies": {
+    "backbone"  : "latest",
+    "jquery"    : "latest",
+    "jquery-ui" : "latest",
+    "lodash"    : "latest",
+
+        
+    "requirejs"         : "latest",
+    "requirejs-text"    : "latest",
+    "requirejs-plugins" : "latest",
+    "requirejs-less"    : "latest",    
+    "three"             : "latest",
+        
+    "tween.js"  : "latest",
+    "dat.gui"   : "latest",
+    "stats-js"  : "latest"
+  },
+  
+  "devDependencies": {
+    "gulp"              : "latest",
+    "gulp-load-plugins" : "latest",
+    "gulp-requirejs"    : "latest",
+    "gulp-uglify"       : "latest"
+  },
+  
+  "directories": {
+    "example" : "examples",
+    "dist" : "dist"
+  },
+  
+  "files": [
+    "LICENSE",
+    "README.md",
+    "dist/Viewport.js",
+    "dist/Viewport.min.js",
+    "dist/pack.js",
+    "dist/pack.min.js",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "gulp build",
+    "init": "gulp init"
+  }
+}
