@@ -1,0 +1,40 @@
+{
+    "baseUrl": "./src",
+    "paths": {
+        "core"      : "core",
+        "vendor"    : "vendor",
+        "libs"      : "libs",
+        
+        "lodash"    : "vendor/lodash/lodash",
+        "jquery"    : "vendor/jquery/jquery",
+        "jquery-private"    : "libs/jquery-private",
+        "backbone"      : "vendor/backbone/backbone",
+        "underscore"    : "libs/underscore",
+        "dat-gui"       : "vendor/dat.gui/dat.gui",
+        "tween"         : "vendor/Tween",
+        
+        "json"      : "vendor/require/json",
+        "text"      : "vendor/require/text",
+        "less"      : "vendor/require/less",
+        
+        
+        "three"     : "vendor/three/three",
+        
+        "Viewport"  : "core/viewport/Viewport",
+        
+        "cmd"       : "core/Command",
+        "globals"   : "core/globals",
+        "plugin"    : "core/Plugin",
+        "stats"     : "vendor/Stats",
+        "async"     : "vendor/async",
+        "ThreeCSG"  : "vendor/ThreeCSG"
+    },
+    
+    "map":{
+        "*" :{
+            "jquery" 	:"jquery-private"
+        },
+
+        "jquery-private" :{"jquery" :"jquery"}
+    }
+}

@@ -11,19 +11,6 @@
   "contributors": [],
     
   "dependencies": {
-    "backbone"  : "latest",
-    "jquery"    : "latest",
-    "jquery-ui" : "latest",
-    "lodash"    : "latest",
-
-        
-    "requirejs"         : "latest",
-    "requirejs-text"    : "latest",
-    "requirejs-plugins" : "latest",
-    "requirejs-less"    : "latest",    
-    "three"             : "latest",
-        
-    "tween.js"  : "latest",
     "dat.gui"   : "latest",
     "stats-js"  : "latest"
   },
@@ -32,7 +19,20 @@
     "gulp"              : "latest",
     "gulp-load-plugins" : "latest",
     "gulp-requirejs"    : "latest",
-    "gulp-uglify"       : "latest"
+    "gulp-uglify"       : "latest",
+        
+    "requirejs"         : "latest",
+    "requirejs-text"    : "latest",
+    "requirejs-plugins" : "latest",
+    "requirejs-less"    : "latest",    
+        
+    "backbone"  : "latest",
+    "lodash"    : "latest",
+    "jquery"    : "latest",
+    "jquery-ui" : "latest",
+        
+    "three"     : "latest",
+    "tween.js"  : "latest"
   },
   
   "directories": {
@@ -50,7 +50,7 @@
     "package.json"
   ],
   "scripts": {
-    "build": "gulp build",
-    "init": "gulp init"
+    "build" : "gulp build",
+    "init"  : "gulp init"
   }
 }
