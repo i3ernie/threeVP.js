@@ -45,8 +45,8 @@
     "README.md",
     "dist/Viewport.js",
     "dist/Viewport.min.js",
-    "dist/pack.js",
-    "dist/pack.min.js",
+    "dist/core.js",
+    "dist/core.min.js",
     "package.json"
   ],
   "scripts": {
