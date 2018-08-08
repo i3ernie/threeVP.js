@@ -282,7 +282,7 @@ THREE.Projector = function () {
 
 		}
 
-		function pushTriangle( a, b, c ) {
+		function pushTriangle( a, b, c, material ) {
 
 			var v1 = _vertexPool[ a ];
 			var v2 = _vertexPool[ b ];
@@ -301,9 +301,11 @@ THREE.Projector = function () {
 				_face.z = ( v1.positionScreen.z + v2.positionScreen.z + v3.positionScreen.z ) / 3;
 				_face.renderOrder = object.renderOrder;
 
-				// use first vertex normal as face normal
-
-				_face.normalModel.fromArray( normals, a * 3 );
+				// face normal
+				_vector3.subVectors( v3.position, v2.position );
+				_vector4.subVectors( v1.position, v2.position );
+				_vector3.cross( _vector4 );
+				_face.normalModel.copy( _vector3 );
 				_face.normalModel.applyMatrix3( normalMatrix ).normalize();
 
 				for ( var i = 0; i < 3; i ++ ) {
@@ -319,7 +321,7 @@ THREE.Projector = function () {
 
 				_face.vertexNormalsLength = 3;
 
-				_face.material = object.material;
+				_face.material = material;
 
 				_renderData.elements.push( _face );
 
@@ -443,6 +445,10 @@ THREE.Projector = function () {
 
 				if ( geometry instanceof THREE.BufferGeometry ) {
 
+					var material = object.material;
+
+					var isMultiMaterial = Array.isArray( material );
+
 					var attributes = geometry.attributes;
 					var groups = geometry.groups;
 
@@ -490,9 +496,15 @@ THREE.Projector = function () {
 
 								var group = groups[ g ];
 
+								material = isMultiMaterial === true
+									 ? object.material[ group.materialIndex ]
+									 : object.material;
+
+								if ( material === undefined ) continue;
+
 								for ( var i = group.start, l = group.start + group.count; i < l; i += 3 ) {
 
-									renderList.pushTriangle( indices[ i ], indices[ i + 1 ], indices[ i + 2 ] );
+									renderList.pushTriangle( indices[ i ], indices[ i + 1 ], indices[ i + 2 ], material );
 
 								}
 
@@ -502,7 +514,7 @@ THREE.Projector = function () {
 
 							for ( var i = 0, l = indices.length; i < l; i += 3 ) {
 
-								renderList.pushTriangle( indices[ i ], indices[ i + 1 ], indices[ i + 2 ] );
+								renderList.pushTriangle( indices[ i ], indices[ i + 1 ], indices[ i + 2 ], material );
 
 							}
 
@@ -510,9 +522,33 @@ THREE.Projector = function () {
 
 					} else {
 
-						for ( var i = 0, l = positions.length / 3; i < l; i += 3 ) {
+						if ( groups.length > 0 ) {
 
-							renderList.pushTriangle( i, i + 1, i + 2 );
+							for ( var g = 0; g < groups.length; g ++ ) {
+
+								var group = groups[ g ];
+
+								material = isMultiMaterial === true
+									 ? object.material[ group.materialIndex ]
+									 : object.material;
+
+								if ( material === undefined ) continue;
+
+								for ( var i = group.start, l = group.start + group.count; i < l; i += 3 ) {
+
+									renderList.pushTriangle( i, i + 1, i + 2, material );
+
+								}
+
+							}
+
+						} else {
+
+							for ( var i = 0, l = positions.length / 3; i < l; i += 3 ) {
+
+								renderList.pushTriangle( i, i + 1, i + 2, material );
+
+							}
 
 						}
 

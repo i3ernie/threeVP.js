@@ -1,37 +1,46 @@
 [
     {
-        "src" : "./node_modules/jquery/dist/jquery.js",
+        "src" : "jquery/dist/jquery.js",
         "dest" : "./src/vendor/jquery/jquery.js"
     },{
-        "src" : "./node_modules/three/build/three.js",
+        "src" : "lodash/lodash.js",
+        "dest" : "./src/vendor/lodash/lodash.js"
+    },{
+        "src" : "backbone/backbone.js",
+        "dest" : "./src/vendor/backbone/backbone.js"
+    },{
+        "src" : "require/require.js",
+        "dest" : "./src/vendor/require/require.js"
+    },{
+        "src" : "three/build/three.js",
         "dest" : "./src/vendor/three/three.js"
     },{
-        "src" : "./node_modules/three/examples/js/renderers/Projector.js",
+        "src" : "three/examples/js/renderers/Projector.js",
         "dest" : "./src/vendor/three/renderers/Projector.js",
         "req" : "[\"three\"]", "name" : "THREE",
         "mod" : "THREE.Projector"
     },{
-        "src" : "./node_modules/three/examples/js/controls/OrbitControls.js",
+        "src" : "three/examples/js/controls/OrbitControls.js",
         "dest" : "./src/vendor/three/controls/OrbitControls.js",
         "req" : "[\"three\"]", "name" : "THREE",
         "mod" : "THREE.OrbitControls"
     },{
-        "src" : "./node_modules/three/examples/js/controls/DragControls.js",
+        "src" : "three/examples/js/controls/DragControls.js",
         "dest" : "./src/vendor/three/controls/DragControls.js",
         "req" : "[\"three\"]", "name" : "THREE",
         "mod" : "THREE.DragControls"
     },{
-        "src" : "./node_modules/three/examples/js/controls/OrthographicTrackballControls.js",
+        "src" : "three/examples/js/controls/OrthographicTrackballControls.js",
         "dest" : "./src/vendor/three/controls/OrthographicTrackballControls.js",
         "req" : "[\"three\"]", "name" : "THREE",
         "mod" : "THREE.OrthographicTrackballControls"
     },{
-        "src" : "./node_modules/three/examples/js/controls/TrackballControls.js",
+        "src" : "three/examples/js/controls/TrackballControls.js",
         "dest" : "./src/vendor/three/controls/TrackballControls.js",
         "req" : "[\"three\"]", "name" : "THREE",
         "mod" : "THREE.TrackballControls"
     },{
-        "src" : "./node_modules/three/examples/js/controls/TransformControls.js",
+        "src" : "three/examples/js/controls/TransformControls.js",
         "dest" : "./src/vendor/three/controls/TransformControls.js",
         "req" : "[\"three\"]", "name" : "THREE",
         "mod" : "THREE.TransformControls"
