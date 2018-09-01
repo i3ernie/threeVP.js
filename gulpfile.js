@@ -25,7 +25,7 @@ gulp.task('init', function () {
     {
         var end = '';
         fs.readFile( './node_modules/'+src, 'utf8', ( err, content ) => {
-            if ( err ) { console.log( err ); done(); return; }
+            if ( err ) { console.log( err ); return; }
             if ( typeof mod === "string" ) { end = "\n return " + mod + ';';  }
             var ret = ( typeof req === "string" )? 'define('+req+', function('+name+'){\n' + content + end + "\n});" : content;
             fs.writeFile(dest, ret, 'utf8', ( err ) => {

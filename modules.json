@@ -9,7 +9,7 @@
         "src" : "backbone/backbone.js",
         "dest" : "./src/vendor/backbone/backbone.js"
     },{
-        "src" : "require/require.js",
+        "src" : "requirejs/require.js",
         "dest" : "./src/vendor/require/require.js"
     },{
         "src" : "three/build/three.js",
