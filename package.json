@@ -1,6 +1,6 @@
 {
   "name"    : "threeVP",
-  "version" : "0.0.3",
+  "version" : "0.0.4",
   "license" : "MIT",
   "description": "threeVP core",
   "author"  : "i3ernie",
@@ -28,7 +28,7 @@
     "requirejs-less"    : "latest",
     "requirejs-plugins" : "latest",
     "requirejs-text"    : "latest",
-    "three"             : "^0.96.0",
+    "three"             : "^0.97.0",
     "tween.js"          : "latest"
   },
   "directories": {
