@@ -19,6 +19,8 @@ require.config({
         
         "json"      : "vendor/require/json",
         "text"      : "vendor/require/text",
+        "less"      : "vendor/require/less",
+        "normalize" : "vendor/require/normalize",
         
         "three"     : "vendor/three/three",
         

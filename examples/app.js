@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-define(['three', "cmd", 'Viewport'], function( THREE, CMD, Viewport ){
+define(['three', "cmd", 'Viewport', "less!style/main.less"], function( THREE, CMD, Viewport ){
     
     return {
         init : function(){
