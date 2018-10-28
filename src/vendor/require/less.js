@@ -45,7 +45,7 @@ define(['require'], function(require) {
     window.less = config.less || {};
     window.less.env = 'development';
 
-    require(['lessc', 'normalize'], function(lessc, normalize) {
+    require(['./lessc', './normalize'], function(lessc, normalize) {
 
       var fileUrl = req.toUrl(lessId + '.less');
       fileUrl = normalize.absoluteURI(fileUrl, pagePath);

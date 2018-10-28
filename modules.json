@@ -8,10 +8,32 @@
     },{
         "src" : "backbone/backbone.js",
         "dest" : "./src/vendor/backbone/backbone.js"
-    },{
+    },
+    
+    {
         "src" : "requirejs/require.js",
         "dest" : "./src/vendor/require/require.js"
     },{
+        "src" : "requirejs-text/text.js",
+        "dest" : "./src/vendor/require/text.js"
+    },{
+        "src" : "requirejs-plugins/src/json.js",
+        "dest" : "./src/vendor/require/json.js"
+    },{
+        "src" : "requirejs-plugins/src/async.js",
+        "dest" : "./src/vendor/require/async.js"
+    },{
+        "src" : "requirejs-less/less.js",
+        "dest" : "./src/vendor/require/less.js"
+    },{
+        "src" : "requirejs-less/lessc.js",
+        "dest" : "./src/vendor/require/lessc.js"
+    },{
+        "src" : "requirejs-less/normalize.js",
+        "dest" : "./src/vendor/require/normalize.js"
+    },
+    
+    {
         "src" : "three/build/three.js",
         "dest" : "./src/vendor/three/three.js"
     },{

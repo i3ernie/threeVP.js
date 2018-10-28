@@ -1,9 +1,11 @@
 {
-  "name"    : "threeVP",
-  "version" : "0.0.5",
-  "license" : "MIT",
+  "name": "threeVP",
+  "version": "0.0.5",
+  "license": "MIT",
   "description": "threeVP core",
-  "author"  : "i3ernie",
+  "author": "i3ernie",
+  "repository" : "https://github.com/i3ernie/threeVP.js.git",
+  
   "keywords": [
     "three.js",
     "WebGL",
@@ -11,25 +13,27 @@
   ],
   "contributors": [],
   "dependencies": {
-    "dat.gui": "^0.7.2",
+    "dat.gui": "^0.7.3",
     "stats-js": "latest"
   },
   "devDependencies": {
-    "backbone"          : "latest",
-    "backbone.radio"    : "latest",
-    "gulp"              : "latest",
-    "gulp-load-plugins" : "latest",
-    "gulp-requirejs"    : "latest",
-    "gulp-uglify"       : "^3.0.1",
-    "jquery"            : "latest",
-    "jquery-ui"         : "latest",
-    "lodash"            : "latest",
+    "backbone": "latest",
+    "backbone.radio": "latest",
+    "gulp": "latest",
+    "gulp-load-plugins": "latest",
+    "gulp-requirejs": "^1.2.0",
+    "gulp-uglify": "^3.0.1",
+    "jquery": "latest",
+    "jquery-ui": "latest",
+    "lodash": "latest",
+
     "requirejs"         : "latest",
     "requirejs-less"    : "latest",
     "requirejs-plugins" : "latest",
     "requirejs-text"    : "latest",
-    "three"             : "^0.97.0",
-    "tween.js"          : "latest"
+
+    "three"     : "^0.97.0",
+    "tween.js"  : "latest"
   },
   "directories": {
     "example": "examples",

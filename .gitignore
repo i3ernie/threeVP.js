@@ -60,3 +60,4 @@ typings/
 # netbeans project folder
 /nbproject/
 /nbproject/private/
+/package-lock.json

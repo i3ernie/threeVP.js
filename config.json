@@ -16,8 +16,8 @@
         "json"      : "vendor/require/json",
         "text"      : "vendor/require/text",
         "less"      : "vendor/require/less",
-        "lessc"      : "vendor/require/lessc",
-        "normalize" : "vendor/require/normalize",
+        "lessc"     : "libs/lessc",
+        "normalize" : "libs/normalize",
         
         
         "three"     : "vendor/three/three",
@@ -34,7 +34,7 @@
     
     "map":{
         "*" :{
-            "jquery" 	:"jquery-private"
+            "jquery"        : "jquery-private"
         },
 
         "jquery-private" :{"jquery" :"jquery"}
