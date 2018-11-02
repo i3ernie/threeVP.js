@@ -34,7 +34,7 @@
     "requirejs-plugins" : "latest",
     "requirejs-text"    : "latest",
 
-    "three"     : "^0.97.0",
+    "three"     : ">0.97.0",
     "tween.js"  : "latest"
   },
   "directories": {
