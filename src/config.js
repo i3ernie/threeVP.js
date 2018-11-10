@@ -27,10 +27,5 @@ require.config({
         "Viewport"  : "core/viewport/Viewport",
         
         "cmd" : "core/Command"
-    },
-    "map": {
-        "*": {
-            "underscore": 'lodash'
-        }
     }
 });

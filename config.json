@@ -20,9 +20,9 @@
         "lessc"     : "libs/lessc",
         "normalize" : "libs/normalize",
         
-        "url"       : "libs/url",
-        "util"      : "libs/util",
-        "punycode"  : "vendor/punycode",
+        "url"       : "libs/url", 
+        "util"      : "libs/util", 
+        "punycode"  : "vendor/punycode", 
         
         
         "three"     : "vendor/three/three",

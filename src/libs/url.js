@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-deine(["vendor/url", "jquery"], function( url, $ ){
+define(["vendor/url", "jquery"], function( URL, $ ){
     let main = $("script[data-main]")[0].attr("data-main");
     
-    url.currentScriptURL = function(){
+    URL.currentScriptURL = function(){
         let ret = main.substring( 0, main.indexOf( "js/" ));
         if ( ret === "/" ) { 
             ret = ""; 
@@ -14,6 +14,6 @@ deine(["vendor/url", "jquery"], function( url, $ ){
         return ret;
     };
     
-    return url;
+    return URL;
 });
 
