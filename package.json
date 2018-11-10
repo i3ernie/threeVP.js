@@ -1,6 +1,6 @@
 {
   "name"        : "threeVP",
-  "version"     : "0.0.6",
+  "version"     : "0.0.7",
   "license"     : "MIT",
   "description" : "threeVP core",
   "author"      : "i3ernie",
@@ -23,11 +23,12 @@
     "backbone.radio"    : "latest",
     "gulp"              : "latest",
     "gulp-load-plugins" : "latest",
-    "gulp-requirejs"    : "^1.2.0",
-    "gulp-uglify"       : "^3.0.1",
+    "gulp-requirejs"    : "latest",
+    "gulp-uglify"       : "latest",
     "jquery"            : "latest",
     "jquery-ui"         : "latest",
     "lodash"            : "latest",
+    "url"               : "latest",
 
     "requirejs"         : "latest",
     "requirejs-less"    : "latest",

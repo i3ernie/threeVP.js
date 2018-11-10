@@ -34,6 +34,16 @@
     },
     
     {
+        "src" : "punycode/punycode.js",
+        "dest" : "./src/vendor/punycode.js"
+    },{
+        "src" : "url/url.js",
+        "dest" : "./src/vendor/url.js",
+        "req" : "[\"punycode\", \"require\"]", "name" : "punycode, require",
+        "mod" : "url"
+    },
+    
+    {
         "src" : "three/build/three.js",
         "dest" : "./src/vendor/three/three.js"
     },{
