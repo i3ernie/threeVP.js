@@ -8,7 +8,7 @@
  * @returns {packL#5.packAnonym$1}
  */
 
-define(["async", "json", "less", "lessc", "normalize", "url", "three", "lodash", "jquery", "backbone", "cmd", "globals", "tween", "dat-gui", "plugin", "stats", "ThreeCSG", "util", "punycode"], 
+define(["async", "json", "less", "lessc", "normalize", "url", "three", "lodash", "jquery", "backbone", "cmd", "globals", "tween", "dat-gui", "plugin", "stats", "ThreeCSG"], 
 function( async, json, less, lessc, normalize, URL, THREE, _, $, Backbone, CMD, GLOBALS, TWEEN, dat, Plugin, Stats ) {
     return {
         "_"         : _,
