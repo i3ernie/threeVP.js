@@ -16,9 +16,9 @@
         
         "json"      : "vendor/require/json",
         "text"      : "vendor/require/text",
+        
         "less"      : "vendor/require/less",
         "lessc"     : "libs/lessc",
-        "normalize" : "libs/normalize",
         
         "url"       : "core/URL", 
        
