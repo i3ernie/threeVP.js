@@ -1,6 +1,6 @@
 {
   "name": "threeVP",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "license": "MIT",
   "description": "threeVP core",
   "author": "i3ernie",
@@ -33,6 +33,8 @@
     "requirejs-less": "latest",
     "requirejs-plugins": "latest",
     "requirejs-text": "latest",
+        
+    "customevent-polyfill" :    "git://github.com/d4tocchini/customevent-polyfill",
     
     "three": ">0.97.0",
     "tween.js": "latest",
