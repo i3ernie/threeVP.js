@@ -8,8 +8,8 @@
  * @returns {packL#5.packAnonym$1}
  */
 
-define(["async", "json", "i18n", "base64", "less", "lessc", "libs/normalize", "url", "three", "lodash", "jquery", "backbone", "cmd", "globals", "tween", "dat-gui", "plugin", "stats", "ThreeCSG", "vendor/require/normalize"], 
-function( async, json, i18n, base64, less, lessc, normalize, URL, THREE, _, $, Backbone, CMD, GLOBALS, TWEEN, dat, Plugin, Stats ) {
+define(["async", "json", "i18n", "base64", "vendor/base64", "less", "lessc", "libs/normalize", "url", "three", "lodash", "jquery", "backbone", "cmd", "globals", "tween", "dat-gui", "plugin", "stats", "ThreeCSG", "vendor/require/normalize"], 
+function( async, json, i18n, base64, utilbase64, less, lessc, normalize, URL, THREE, _, $, Backbone, CMD, GLOBALS, TWEEN, dat, Plugin, Stats ) {
     return {
         "_"         : _,
         "$"         : $,
@@ -23,6 +23,7 @@ function( async, json, i18n, base64, less, lessc, normalize, URL, THREE, _, $, B
         "TWEEN"     : TWEEN,
         "URL"       : URL,
         "Stats"     : Stats,
+        "base64"    : utilbase64,
         "requirejs" : {
             "json" : json,
             "less" : less,

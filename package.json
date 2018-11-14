@@ -25,12 +25,15 @@
     "jquery": "latest",
     "jquery-ui": "latest",
     "lodash": "latest",
+    
     "requirejs": "latest",
     "requirejs-base64" : "git://github.com/i3ernie/requirejs-base64.git",
+    "requirejs-base64-plugin" : "git://github.com/d3x7r0/requirejs-base64-plugin.git",
     "i18n" : "git://github.com/requirejs/i18n.git",
     "requirejs-less": "latest",
     "requirejs-plugins": "latest",
     "requirejs-text": "latest",
+    
     "three": ">0.97.0",
     "tween.js": "latest",
     "url": "latest"
