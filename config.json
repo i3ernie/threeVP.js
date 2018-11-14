@@ -13,12 +13,17 @@
         "underscore"    : "libs/underscore",
         "dat-gui"       : "vendor/dat.gui/dat.gui",
         "tween"         : "vendor/Tween",
+        "events"        : "libs/Events",
         
         "json"      : "vendor/require/json",
         "text"      : "vendor/require/text",
         
         "i18n"      : "vendor/require/i18n",
         "base64"    : "vendor/require/base64",
+        
+        "es6"       : "vendor/require/es6",
+        "babel"     : "vendor/require/babel.min",
+        
         
         "less"      : "vendor/require/less",
         "lessc"     : "libs/lessc",
