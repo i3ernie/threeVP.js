@@ -23,6 +23,12 @@
         "src" : "requirejs-plugins/src/async.js",
         "dest" : "./src/vendor/require/async.js"
     },{
+        "src" : "requirejs-base64/base64.js",
+        "dest" : "./src/vendor/require/base64.js"
+    },{
+        "src" : "i18n/i18n.js",
+        "dest" : "./src/vendor/require/i18n.js"
+    },{
         "src" : "requirejs-less/less.js",
         "dest" : "./src/vendor/require/less.js"
     },{

@@ -11,7 +11,7 @@ define(["lodash", "jquery"], function ( _, $ ) {
     });
     
     URL.currentScriptURL = function(){
-        let $el = $("script[data-main]")[0];
+        let $el = $( $("script[data-main]")[0] );
         let main = $el.attr("data-main");
         let ret = main.substring( 0, main.indexOf( "js/" ));
         

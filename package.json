@@ -1,48 +1,44 @@
 {
-  "name"        : "threeVP",
-  "version"     : "0.0.8",
-  "license"     : "MIT",
-  "description" : "threeVP core",
-  "author"      : "i3ernie",
-  "repository"  : "https://github.com/i3ernie/threeVP.js.git",
+  "name": "threeVP",
+  "version": "0.0.9",
+  "license": "MIT",
+  "description": "threeVP core",
+  "author": "i3ernie",
+  "repository": "https://github.com/i3ernie/threeVP.js.git",
   "contributors": [],
-  
   "keywords": [
     "three.js",
     "WebGL",
     "Viewport"
   ],
-    
   "dependencies": {
     "dat.gui": "^0.7.3",
     "stats-js": "latest"
   },
-  
   "devDependencies": {
-    "backbone"          : "latest",
-    "backbone.radio"    : "latest",
-    "gulp"              : "latest",
-    "gulp-load-plugins" : "latest",
-    "gulp-requirejs"    : "latest",
-    "gulp-uglify"       : "latest",
-    "jquery"            : "latest",
-    "jquery-ui"         : "latest",
-    "lodash"            : "latest",
-    "url"               : "latest",
-
-    "requirejs"         : "latest",
-    "requirejs-less"    : "latest",
-    "requirejs-plugins" : "latest",
-    "requirejs-text"    : "latest",
-
-    "three"     : ">0.97.0",
-    "tween.js"  : "latest"
+    "backbone": "latest",
+    "backbone.radio": "latest",
+    "gulp": "latest",
+    "gulp-load-plugins": "latest",
+    "gulp-requirejs": "latest",
+    "gulp-uglify": "latest",
+    "jquery": "latest",
+    "jquery-ui": "latest",
+    "lodash": "latest",
+    "requirejs": "latest",
+    "requirejs-base64" : "git://github.com/i3ernie/requirejs-base64.git",
+    "i18n" : "git://github.com/requirejs/i18n.git",
+    "requirejs-less": "latest",
+    "requirejs-plugins": "latest",
+    "requirejs-text": "latest",
+    "three": ">0.97.0",
+    "tween.js": "latest",
+    "url": "latest"
   },
   "directories": {
     "example": "examples",
     "dist": "dist"
   },
-  
   "files": [
     "LICENSE",
     "README.md",
@@ -52,7 +48,6 @@
     "dist/core.min.js",
     "package.json"
   ],
-  
   "scripts": {
     "build": "gulp build",
     "init": "gulp init",

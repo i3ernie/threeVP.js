@@ -17,6 +17,9 @@
         "json"      : "vendor/require/json",
         "text"      : "vendor/require/text",
         
+        "i18n"      : "vendor/require/i18n",
+        "base64"    : "vendor/require/base64",
+        
         "less"      : "vendor/require/less",
         "lessc"     : "libs/lessc",
         
