@@ -6,7 +6,7 @@
         "vendor"    : "vendor",
         "libs"      : "libs",
         
-        "lodash"        : "vendor/lodash/lodash",
+        "lodash"        : "vendor/lodash/lodash.min",
         "jquery"        : "vendor/jquery/jquery",
         "jquery-private"    : "libs/jquery-private",
         "backbone"      : "vendor/backbone/backbone",

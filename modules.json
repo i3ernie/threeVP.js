@@ -6,6 +6,9 @@
         "src" : "lodash/lodash.js",
         "dest" : "./src/vendor/lodash/lodash.js"
     },{
+        "src" : "lodash/lodash.min.js",
+        "dest" : "./src/vendor/lodash/lodash.min.js"
+    },{
         "src" : "backbone/backbone.js",
         "dest" : "./src/vendor/backbone/backbone.js"
     },
