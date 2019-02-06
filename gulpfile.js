@@ -15,11 +15,11 @@ var pkg = require('./package.json');
 var dirs = pkg.directories;
 var requireconfig = require("./config.json");
 
-gulp.task('default', function () {
+gulp.task('default', ( done ) => {
     // place code for your default task here
 });
 
-gulp.task('init', function () {
+gulp.task('init', ( done ) => {
     
     var fnc = function( src, dest, req, name, mod )
     {
@@ -39,10 +39,11 @@ gulp.task('init', function () {
     _.each(modules, ( el ) =>{
         fnc(el.src, el.dest, el.req , el.name, el.mod);
     });    
+    done();
     
 });
 
-gulp.task("build", function(){
+gulp.task("build", ( done ) => {
     "use strict";
     var ret = plugins.requirejs(
         _.extend({}, requireconfig,
@@ -70,7 +71,7 @@ gulp.task("build", function(){
         _.extend({}, requireconfig,
             {
                 "name"      : "vendor/require/require",
-                "exclude"   : [],
+                "exclude"   : ["lodash"],
                 "out"       : "core.js",
                 "include" : ["underscore", "core"]
             })
@@ -81,7 +82,7 @@ gulp.task("build", function(){
         _.extend({}, requireconfig,
             {
                 "name"      : "vendor/require/require",
-                "exclude"   : [],
+                "exclude"   : ["lodash"],
                 "out"       : "core.min.js",
                 "include" : ["underscore", "core"]
             })

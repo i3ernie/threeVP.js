@@ -1,6 +1,6 @@
 {
   "name": "threeVP",
-  "version": "0.0.11",
+  "version": "0.0.101",
   "license": "MIT",
   "description": "threeVP core",
   "author": "i3ernie",
@@ -12,32 +12,31 @@
     "Viewport"
   ],
   "dependencies": {
-    "dat.gui": "^0.7.3",
-    "stats-js": "latest"
+    "dat.gui": "^0.7.5",
+    "stats-js": "^1.0.0"
   },
   "devDependencies": {
     "backbone": "latest",
     "backbone.radio": "latest",
+    "customevent-polyfill": "git://github.com/d4tocchini/customevent-polyfill.git",
+        
     "gulp": "latest",
     "gulp-load-plugins": "latest",
-    "gulp-requirejs": "latest",
+    "gulp-requirejs": "^1.2.1",
     "gulp-uglify": "latest",
+        
+    "i18n": "git://github.com/requirejs/i18n.git",
     "jquery": "latest",
     "jquery-ui": "latest",
     "lodash": "latest",
-    
     "requirejs": "latest",
-    "requirejs-base64" : "git://github.com/i3ernie/requirejs-base64.git",
-    "requirejs-base64-plugin" : "git://github.com/d3x7r0/requirejs-base64-plugin.git",
-    "i18n" : "git://github.com/requirejs/i18n.git",
-    "requirejs-babel" :"git://github.com/mikach/requirejs-babel.git",
+    "requirejs-babel": "git://github.com/mikach/requirejs-babel.git",
+    "requirejs-base64": "git://github.com/i3ernie/requirejs-base64.git",
+    "requirejs-base64-plugin": "git://github.com/d3x7r0/requirejs-base64-plugin.git",
     "requirejs-less": "latest",
     "requirejs-plugins": "latest",
     "requirejs-text": "latest",
-        
-    "customevent-polyfill" :    "git://github.com/d4tocchini/customevent-polyfill",
-    
-    "three": ">0.97.0",
+    "three": "^0.101.0",
     "tween.js": "latest",
     "url": "latest"
   },

@@ -1,11 +1,27 @@
 /**
  * 
+ * @param {type} async
+ * @param {type} json
+ * @param {type} i18n
+ * @param {type} es6
+ * @param {type} base64
+ * @param {type} utilbase64
+ * @param {type} less
+ * @param {type} lessc
+ * @param {type} normalize
+ * @param {type} Events
+ * @param {type} URL
  * @param {type} THREE
  * @param {type} _
  * @param {type} $
  * @param {type} Backbone
  * @param {type} CMD
- * @returns {packL#5.packAnonym$1}
+ * @param {type} GLOBALS
+ * @param {type} TWEEN
+ * @param {type} dat
+ * @param {type} Plugin
+ * @param {type} Stats
+ * @returns {coreL#12.coreAnonym$1}
  */
 
 define(["async", "json", "i18n", "es6", "base64", "vendor/base64", 
