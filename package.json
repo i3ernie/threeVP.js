@@ -16,15 +16,13 @@
     "stats-js": "^1.0.0"
   },
   "devDependencies": {
-    "backbone": "latest",
+    "backbone": "^1.4.0",
     "backbone.radio": "latest",
     "customevent-polyfill": "git://github.com/d4tocchini/customevent-polyfill.git",
-        
     "gulp": "latest",
     "gulp-load-plugins": "latest",
     "gulp-requirejs": "^1.2.1",
-    "gulp-uglify": "latest",
-        
+    "gulp-uglify": "^3.0.2",
     "i18n": "git://github.com/requirejs/i18n.git",
     "jquery": "latest",
     "jquery-ui": "latest",
@@ -36,7 +34,7 @@
     "requirejs-less": "latest",
     "requirejs-plugins": "latest",
     "requirejs-text": "latest",
-    "three": "^0.101.0",
+    "three": "^0.102",
     "tween.js": "latest",
     "url": "latest"
   },

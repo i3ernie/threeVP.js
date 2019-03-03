@@ -71,7 +71,7 @@ gulp.task("build", ( done ) => {
         _.extend({}, requireconfig,
             {
                 "name"      : "vendor/require/require",
-                "exclude"   : ["lodash"],
+                "exclude"   : [],
                 "out"       : "core.js",
                 "include" : ["underscore", "core"]
             })
@@ -82,7 +82,7 @@ gulp.task("build", ( done ) => {
         _.extend({}, requireconfig,
             {
                 "name"      : "vendor/require/require",
-                "exclude"   : ["lodash"],
+                "exclude"   : [],
                 "out"       : "core.min.js",
                 "include" : ["underscore", "core"]
             })
