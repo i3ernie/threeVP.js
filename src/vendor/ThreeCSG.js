@@ -1,3 +1,5 @@
+/* global ThreeBSP */
+
 'use strict';
 define(["three"], function( THREE ){
 

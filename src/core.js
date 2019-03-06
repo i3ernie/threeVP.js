@@ -31,7 +31,12 @@ define(["async", "json", "i18n", "es6", "base64", "vendor/base64",
     "ThreeCSG", "vendor/require/normalize", 
     "vendor/polyfill/CustomEvent", "vendor/polyfill/Function"
 ], 
-function( async, json, i18n, es6, base64, utilbase64, less, lessc, normalize, Events, URL, THREE, _, $, Backbone, CMD, GLOBALS, TWEEN, dat, Plugin, Stats ) {
+function( 
+    async, json, i18n, es6, base64, utilbase64, 
+    less, lessc, normalize, Events, 
+    URL, THREE, _, $, Backbone, 
+    CMD, GLOBALS, TWEEN, dat, Plugin, Stats,
+    ThreeCSG ) {
     return {
         "_"         : _,
         "$"         : $,
@@ -44,6 +49,7 @@ function( async, json, i18n, es6, base64, utilbase64, less, lessc, normalize, Ev
         "Plugin"    : Plugin,
         "THREE"     : THREE,
         "TWEEN"     : TWEEN,
+        "ThreeCSG"  : ThreeCSG,
         "URL"       : URL,
         "Stats"     : Stats,
         "base64"    : utilbase64,
