@@ -34,9 +34,9 @@ define(["lodash"], function( _ ){
      * @param {type} delta
      * @returns {undefined}
      */
-    Loop.prototype.update = function( delta ){
+    Loop.prototype.update = function( delta, now ){
         _.each(this._fcts, function( fct ){
-            fct( delta );
+            fct( delta, now );
         });
     };
 

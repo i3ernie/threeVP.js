@@ -5,7 +5,7 @@ define(["core/loop/Loop", "lodash"], function( Loop, _ ){
 //////////////////////////////////////////////////////////////////////////////////
 var RenderingLoop	= function()
 {
-    Loop.call(this);
+    Loop.call( this );
 
     this.maxDelta	= 0.2;
     var requestId	= null;
@@ -20,7 +20,7 @@ var RenderingLoop	= function()
 		var deltaMsec	= Math.min(this.maxDelta*1000, nowMsec - lastTimeMsec);
 		lastTimeMsec	= nowMsec;
 		// call each update function
-		this.update( deltaMsec/1000 );
+		this.update( deltaMsec/1000, nowMsec/1000 );
     }.bind(this);
 
 
