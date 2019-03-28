@@ -1,10 +1,10 @@
 {
-  "name": "threeVP",
-  "version": "0.0.324",
-  "license": "MIT",
-  "description": "threeVP core",
-  "author": "i3ernie",
-  "repository": "https://github.com/i3ernie/threeVP.js.git",
+  "name" : "threeVP",
+  "version" : "0.0.328",
+  "license" : "MIT",
+  "description" : "threeVP core",
+  "author" : "i3ernie",
+  "repository" : "https://github.com/i3ernie/threeVP.js.git",
   "contributors": [],
   "keywords": [
     "three.js",

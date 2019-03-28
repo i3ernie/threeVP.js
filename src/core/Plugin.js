@@ -3,12 +3,12 @@
  */
 define([ "lodash" ], function( _ ){
 
-    var Plugin = function( n, opt )
+    let Plugin = function( opt )
     {
         this.options = opt || { enabled : true };
         this._active = false;
 
-        this.name = ( typeof n === "string" )? n : "Plugin";
+        this.name = ( typeof opt.name === "string" )? opt.name : "Plugin";
         if ( _.isObject(opt) ) { 
             _.extend( this.options, opt ); 
         }
@@ -17,26 +17,30 @@ define([ "lodash" ], function( _ ){
         }
     };
     
-    Plugin.prototype.registerEvents = function() {
-    };
+    Object.assign( Plugin.prototype, {
+        initPlugin : function( done ){
+            if ( typeof done === "function" ) done();
+        },
+        
+        registerEvents : function() { },
     
-    Plugin.prototype.removeEvents = function() {
-    };
+        removeEvents : function() { },
     
-    Plugin.prototype.enable = function() {
-        if ( this._active === true ) return;
-        this._active = true;
-        this.registerEvents();
-    };
-    Plugin.prototype.disable = function() {
-        if ( this._active === false ) return;
-        this._active = false;
-        this.removeEvents();
-    };
+        enable : function() {
+            if ( this._active === true ) return;
+            this._active = true;
+            this.registerEvents();
+        },
+        disable : function() {
+            if ( this._active === false ) return;
+            this._active = false;
+            this.removeEvents();
+        },
 
-    Plugin.prototype.isActive = function() {
-        return this._active;
-    };
+        isActive : function() {
+            return this._active;
+        }
+    });
     
     return Plugin;
 });
