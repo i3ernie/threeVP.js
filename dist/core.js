@@ -93962,40 +93962,49 @@ return index;
  */
 define('plugin',[ "lodash" ], function( _ ){
 
-    var Plugin = function( n, opt )
+    let defaults = {
+        enabled : true,
+        name : "Plugin"
+    };
+
+    let Plugin = function( opt )
     {
-        this.options = opt || { enabled : true };
+        this.options = _.extend({}, defaults, opt );
         this._active = false;
 
-        this.name = ( typeof n === "string" )? n : "Plugin";
-        if ( _.isObject(opt) ) { 
-            _.extend( this.options, opt ); 
-        }
+        this.name = this.options.name;
+
         if ( this.options.enabled === true) { 
             this.enable(); 
         }
     };
     
-    Plugin.prototype.registerEvents = function() {
-    };
-    
-    Plugin.prototype.removeEvents = function() {
-    };
-    
-    Plugin.prototype.enable = function() {
-        if ( this._active === true ) return;
-        this._active = true;
-        this.registerEvents();
-    };
-    Plugin.prototype.disable = function() {
-        if ( this._active === false ) return;
-        this._active = false;
-        this.removeEvents();
-    };
+    Object.assign( Plugin.prototype, {
 
-    Plugin.prototype.isActive = function() {
-        return this._active;
-    };
+        initPlugin : function( done ){
+            if ( typeof done === "function" ) done();
+        },
+        
+        registerEvents : function() { },
+    
+        removeEvents : function() { },
+    
+        enable : function() {
+            if ( this._active === true ) return;
+            this._active = true;
+            this.registerEvents();
+        },
+
+        disable : function() {
+            if ( this._active === false ) return;
+            this._active = false;
+            this.removeEvents();
+        },
+
+        isActive : function() {
+            return this._active;
+        }
+    });
     
     return Plugin;
 });
