@@ -3,21 +3,25 @@
  */
 define([ "lodash" ], function( _ ){
 
+    let defaults = {
+        enabled : true,
+        name : "Plugin"
+    };
+
     let Plugin = function( opt )
     {
-        this.options = opt || { enabled : true };
+        this.options = _.extend({}, defaults, opt );
         this._active = false;
 
-        this.name = ( typeof opt.name === "string" )? opt.name : "Plugin";
-        if ( _.isObject(opt) ) { 
-            _.extend( this.options, opt ); 
-        }
+        this.name = this.options.name;
+
         if ( this.options.enabled === true) { 
             this.enable(); 
         }
     };
     
     Object.assign( Plugin.prototype, {
+
         initPlugin : function( done ){
             if ( typeof done === "function" ) done();
         },
@@ -31,6 +35,7 @@ define([ "lodash" ], function( _ ){
             this._active = true;
             this.registerEvents();
         },
+
         disable : function() {
             if ( this._active === false ) return;
             this._active = false;
