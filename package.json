@@ -1,10 +1,10 @@
 {
-  "name" : "threeVP",
-  "version" : "0.0.403",
-  "license" : "MIT",
-  "description" : "threeVP core",
-  "author" : "i3ernie",
-  "repository" : "https://github.com/i3ernie/threeVP.js.git",
+  "name": "threeVP",
+  "version": "0.0.403",
+  "license": "MIT",
+  "description": "threeVP core",
+  "author": "i3ernie",
+  "repository": "https://github.com/i3ernie/threeVP.js.git",
   "contributors": [],
   "keywords": [
     "three.js",
@@ -12,7 +12,7 @@
     "Viewport"
   ],
   "dependencies": {
-    "dat.gui": "^0.7.5",
+    "dat.gui": "^0.7.6",
     "stats-js": "^1.0.0"
   },
   "devDependencies": {
@@ -27,7 +27,6 @@
     "jquery": "latest",
     "jquery-ui": "latest",
     "lodash": "latest",
-    
     "requirejs": "latest",
     "requirejs-babel": "git://github.com/mikach/requirejs-babel.git",
     "requirejs-base64": "git://github.com/i3ernie/requirejs-base64.git",
@@ -35,8 +34,7 @@
     "requirejs-less": "latest",
     "requirejs-plugins": "latest",
     "requirejs-text": "latest",
-    
-    "three": ">=0.103",
+    "three": "latest",
     "tween.js": "latest",
     "url": "latest"
   },
