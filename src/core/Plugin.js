@@ -1,7 +1,7 @@
 /**
  * Created by Hessberger on 11.05.2015.
  */
-define([ "lodash" ], function( _ ){
+define([ "lodash", "async" ], function( _, async ){
 
     let defaults = {
         enabled : true,
@@ -22,7 +22,7 @@ define([ "lodash" ], function( _ ){
     
     Object.assign( Plugin.prototype, {
 
-        initPlugin : function( done ){
+        initPlugin : function( app, done ){
             if ( typeof done === "function" ) done();
         },
         
@@ -46,6 +46,17 @@ define([ "lodash" ], function( _ ){
             return this._active;
         }
     });
+
+    Plugin.initPlugins = function( app, clbk ){
+        let a = [];
+        _.each( app.plugins, function( plg, k ){
+                a.push( function( done ){ plg.initPlugin( app, done ); } );
+        });
+        async.parallel(a, function( err, res ){
+                if ( err ) { console.error( err ); return; }
+                clbk( null, app.plugins );
+        });
+    };
     
     return Plugin;
 });

@@ -1,6 +1,6 @@
 {
   "name" : "threeVP",
-  "version" : "0.0.329",
+  "version" : "0.0.403",
   "license" : "MIT",
   "description" : "threeVP core",
   "author" : "i3ernie",
@@ -16,7 +16,7 @@
     "stats-js": "^1.0.0"
   },
   "devDependencies": {
-    "backbone": "^1.4.0",
+    "backbone": "latest",
     "backbone.radio": "latest",
     "customevent-polyfill": "git://github.com/d4tocchini/customevent-polyfill.git",
     "gulp": "latest",
@@ -27,6 +27,7 @@
     "jquery": "latest",
     "jquery-ui": "latest",
     "lodash": "latest",
+    
     "requirejs": "latest",
     "requirejs-babel": "git://github.com/mikach/requirejs-babel.git",
     "requirejs-base64": "git://github.com/i3ernie/requirejs-base64.git",
@@ -34,7 +35,8 @@
     "requirejs-less": "latest",
     "requirejs-plugins": "latest",
     "requirejs-text": "latest",
-    "three": ">=0.102",
+    
+    "three": ">=0.103",
     "tween.js": "latest",
     "url": "latest"
   },
