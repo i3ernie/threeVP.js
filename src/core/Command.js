@@ -3,7 +3,8 @@
  */
 define(["lodash", "backbone"], function( _, Backbone )
 {
-    var CMD = _.extend( this, Backbone.Events, {
+    let CMD = {};
+    _.extend( CMD, Backbone.Events, {
         
         createControl : function( nameCtr ){
             this[nameCtr] = {};

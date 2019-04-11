@@ -1,12 +1,12 @@
 {
-  "name": "threeVP",
-  "version": "0.0.403",
-  "license": "MIT",
-  "description": "threeVP core",
-  "author": "i3ernie",
-  "repository": "https://github.com/i3ernie/threeVP.js.git",
-  "contributors": [],
-  "keywords": [
+  "name" : "threeVP",
+  "version" : "0.0.410",
+  "license" : "MIT",
+  "description" : "threeVP core",
+  "author" : "i3ernie",
+  "repository" : "https://github.com/i3ernie/threeVP.js.git",
+  "contributors" : [],
+  "keywords" : [
     "three.js",
     "WebGL",
     "Viewport"
