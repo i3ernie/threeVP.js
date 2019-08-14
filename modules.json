@@ -44,12 +44,17 @@
         "src" : "requirejs-less/normalize.js",
         "dest" : "./src/vendor/require/normalize.js"
     },{
-        "src" : "requirejs-babel/babel-5.8.34.min.js",
+        "src" : "babel/index.js",
         "dest" : "./src/vendor/require/babel.min.js"
     },{
         "src" : "requirejs-babel/es6.js",
         "dest" : "./src/vendor/require/es6.js"
+    },{
+        "src" : "babel-plugin-module-resolver-standalone/index.js",
+        "dest" : "./src/vendor/require/babel-plugin-module-resolver.js"
     },
+    
+    
     
     
     {

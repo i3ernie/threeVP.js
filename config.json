@@ -23,6 +23,7 @@
         
         "es6"       : "vendor/require/es6",
         "babel"     : "vendor/require/babel.min",
+        "babel-plugin-module-resolver" : "vendor/require/babel-plugin-module-resolver",
         
         
         "less"      : "vendor/require/less",

@@ -137,1118 +137,8 @@ define('core/PointerRay',["three"], function( THREE ){
 });
 
 
-define('vendor/three/renderers/Projector',["three"], function(THREE){
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author supereggbert / http://www.paulbrunt.co.uk/
- * @author julianwa / https://github.com/julianwa
- */
+define('core/Domevents',["three"], function( THREE ){
 
-THREE.RenderableObject = function () {
-
-	this.id = 0;
-
-	this.object = null;
-	this.z = 0;
-	this.renderOrder = 0;
-
-};
-
-//
-
-THREE.RenderableFace = function () {
-
-	this.id = 0;
-
-	this.v1 = new THREE.RenderableVertex();
-	this.v2 = new THREE.RenderableVertex();
-	this.v3 = new THREE.RenderableVertex();
-
-	this.normalModel = new THREE.Vector3();
-
-	this.vertexNormalsModel = [ new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3() ];
-	this.vertexNormalsLength = 0;
-
-	this.color = new THREE.Color();
-	this.material = null;
-	this.uvs = [ new THREE.Vector2(), new THREE.Vector2(), new THREE.Vector2() ];
-
-	this.z = 0;
-	this.renderOrder = 0;
-
-};
-
-//
-
-THREE.RenderableVertex = function () {
-
-	this.position = new THREE.Vector3();
-	this.positionWorld = new THREE.Vector3();
-	this.positionScreen = new THREE.Vector4();
-
-	this.visible = true;
-
-};
-
-THREE.RenderableVertex.prototype.copy = function ( vertex ) {
-
-	this.positionWorld.copy( vertex.positionWorld );
-	this.positionScreen.copy( vertex.positionScreen );
-
-};
-
-//
-
-THREE.RenderableLine = function () {
-
-	this.id = 0;
-
-	this.v1 = new THREE.RenderableVertex();
-	this.v2 = new THREE.RenderableVertex();
-
-	this.vertexColors = [ new THREE.Color(), new THREE.Color() ];
-	this.material = null;
-
-	this.z = 0;
-	this.renderOrder = 0;
-
-};
-
-//
-
-THREE.RenderableSprite = function () {
-
-	this.id = 0;
-
-	this.object = null;
-
-	this.x = 0;
-	this.y = 0;
-	this.z = 0;
-
-	this.rotation = 0;
-	this.scale = new THREE.Vector2();
-
-	this.material = null;
-	this.renderOrder = 0;
-
-};
-
-//
-
-THREE.Projector = function () {
-
-	var _object, _objectCount, _objectPool = [], _objectPoolLength = 0,
-		_vertex, _vertexCount, _vertexPool = [], _vertexPoolLength = 0,
-		_face, _faceCount, _facePool = [], _facePoolLength = 0,
-		_line, _lineCount, _linePool = [], _linePoolLength = 0,
-		_sprite, _spriteCount, _spritePool = [], _spritePoolLength = 0,
-
-		_renderData = { objects: [], lights: [], elements: [] },
-
-		_vector3 = new THREE.Vector3(),
-		_vector4 = new THREE.Vector4(),
-
-		_clipBox = new THREE.Box3( new THREE.Vector3( - 1, - 1, - 1 ), new THREE.Vector3( 1, 1, 1 ) ),
-		_boundingBox = new THREE.Box3(),
-		_points3 = new Array( 3 ),
-
-		_viewMatrix = new THREE.Matrix4(),
-		_viewProjectionMatrix = new THREE.Matrix4(),
-
-		_modelMatrix,
-		_modelViewProjectionMatrix = new THREE.Matrix4(),
-
-		_normalMatrix = new THREE.Matrix3(),
-
-		_frustum = new THREE.Frustum(),
-
-		_clippedVertex1PositionScreen = new THREE.Vector4(),
-		_clippedVertex2PositionScreen = new THREE.Vector4();
-
-	//
-
-	this.projectVector = function ( vector, camera ) {
-
-		console.warn( 'THREE.Projector: .projectVector() is now vector.project().' );
-		vector.project( camera );
-
-	};
-
-	this.unprojectVector = function ( vector, camera ) {
-
-		console.warn( 'THREE.Projector: .unprojectVector() is now vector.unproject().' );
-		vector.unproject( camera );
-
-	};
-
-	this.pickingRay = function () {
-
-		console.error( 'THREE.Projector: .pickingRay() is now raycaster.setFromCamera().' );
-
-	};
-
-	//
-
-	var RenderList = function () {
-
-		var normals = [];
-		var colors = [];
-		var uvs = [];
-
-		var object = null;
-		var material = null;
-
-		var normalMatrix = new THREE.Matrix3();
-
-		function setObject( value ) {
-
-			object = value;
-			material = object.material;
-
-			normalMatrix.getNormalMatrix( object.matrixWorld );
-
-			normals.length = 0;
-			colors.length = 0;
-			uvs.length = 0;
-
-		}
-
-		function projectVertex( vertex ) {
-
-			var position = vertex.position;
-			var positionWorld = vertex.positionWorld;
-			var positionScreen = vertex.positionScreen;
-
-			positionWorld.copy( position ).applyMatrix4( _modelMatrix );
-			positionScreen.copy( positionWorld ).applyMatrix4( _viewProjectionMatrix );
-
-			var invW = 1 / positionScreen.w;
-
-			positionScreen.x *= invW;
-			positionScreen.y *= invW;
-			positionScreen.z *= invW;
-
-			vertex.visible = positionScreen.x >= - 1 && positionScreen.x <= 1 &&
-					 positionScreen.y >= - 1 && positionScreen.y <= 1 &&
-					 positionScreen.z >= - 1 && positionScreen.z <= 1;
-
-		}
-
-		function pushVertex( x, y, z ) {
-
-			_vertex = getNextVertexInPool();
-			_vertex.position.set( x, y, z );
-
-			projectVertex( _vertex );
-
-		}
-
-		function pushNormal( x, y, z ) {
-
-			normals.push( x, y, z );
-
-		}
-
-		function pushColor( r, g, b ) {
-
-			colors.push( r, g, b );
-
-		}
-
-		function pushUv( x, y ) {
-
-			uvs.push( x, y );
-
-		}
-
-		function checkTriangleVisibility( v1, v2, v3 ) {
-
-			if ( v1.visible === true || v2.visible === true || v3.visible === true ) return true;
-
-			_points3[ 0 ] = v1.positionScreen;
-			_points3[ 1 ] = v2.positionScreen;
-			_points3[ 2 ] = v3.positionScreen;
-
-			return _clipBox.intersectsBox( _boundingBox.setFromPoints( _points3 ) );
-
-		}
-
-		function checkBackfaceCulling( v1, v2, v3 ) {
-
-			return ( ( v3.positionScreen.x - v1.positionScreen.x ) *
-				    ( v2.positionScreen.y - v1.positionScreen.y ) -
-				    ( v3.positionScreen.y - v1.positionScreen.y ) *
-				    ( v2.positionScreen.x - v1.positionScreen.x ) ) < 0;
-
-		}
-
-		function pushLine( a, b ) {
-
-			var v1 = _vertexPool[ a ];
-			var v2 = _vertexPool[ b ];
-
-			// Clip
-
-			v1.positionScreen.copy( v1.position ).applyMatrix4( _modelViewProjectionMatrix );
-			v2.positionScreen.copy( v2.position ).applyMatrix4( _modelViewProjectionMatrix );
-
-			if ( clipLine( v1.positionScreen, v2.positionScreen ) === true ) {
-
-				// Perform the perspective divide
-				v1.positionScreen.multiplyScalar( 1 / v1.positionScreen.w );
-				v2.positionScreen.multiplyScalar( 1 / v2.positionScreen.w );
-
-				_line = getNextLineInPool();
-				_line.id = object.id;
-				_line.v1.copy( v1 );
-				_line.v2.copy( v2 );
-				_line.z = Math.max( v1.positionScreen.z, v2.positionScreen.z );
-				_line.renderOrder = object.renderOrder;
-
-				_line.material = object.material;
-
-				if ( object.material.vertexColors === THREE.VertexColors ) {
-
-					_line.vertexColors[ 0 ].fromArray( colors, a * 3 );
-					_line.vertexColors[ 1 ].fromArray( colors, b * 3 );
-
-				}
-
-				_renderData.elements.push( _line );
-
-			}
-
-		}
-
-		function pushTriangle( a, b, c, material ) {
-
-			var v1 = _vertexPool[ a ];
-			var v2 = _vertexPool[ b ];
-			var v3 = _vertexPool[ c ];
-
-			if ( checkTriangleVisibility( v1, v2, v3 ) === false ) return;
-
-			if ( material.side === THREE.DoubleSide || checkBackfaceCulling( v1, v2, v3 ) === true ) {
-
-				_face = getNextFaceInPool();
-
-				_face.id = object.id;
-				_face.v1.copy( v1 );
-				_face.v2.copy( v2 );
-				_face.v3.copy( v3 );
-				_face.z = ( v1.positionScreen.z + v2.positionScreen.z + v3.positionScreen.z ) / 3;
-				_face.renderOrder = object.renderOrder;
-
-				// face normal
-				_vector3.subVectors( v3.position, v2.position );
-				_vector4.subVectors( v1.position, v2.position );
-				_vector3.cross( _vector4 );
-				_face.normalModel.copy( _vector3 );
-				_face.normalModel.applyMatrix3( normalMatrix ).normalize();
-
-				for ( var i = 0; i < 3; i ++ ) {
-
-					var normal = _face.vertexNormalsModel[ i ];
-					normal.fromArray( normals, arguments[ i ] * 3 );
-					normal.applyMatrix3( normalMatrix ).normalize();
-
-					var uv = _face.uvs[ i ];
-					uv.fromArray( uvs, arguments[ i ] * 2 );
-
-				}
-
-				_face.vertexNormalsLength = 3;
-
-				_face.material = material;
-
-				if ( material.vertexColors === THREE.FaceColors || material.vertexColors === THREE.VertexColors ) {
-
-					_face.color.fromArray( colors, a * 3 );
-
-				}
-
-				_renderData.elements.push( _face );
-
-			}
-
-		}
-
-		return {
-			setObject: setObject,
-			projectVertex: projectVertex,
-			checkTriangleVisibility: checkTriangleVisibility,
-			checkBackfaceCulling: checkBackfaceCulling,
-			pushVertex: pushVertex,
-			pushNormal: pushNormal,
-			pushColor: pushColor,
-			pushUv: pushUv,
-			pushLine: pushLine,
-			pushTriangle: pushTriangle
-		};
-
-	};
-
-	var renderList = new RenderList();
-
-	function projectObject( object ) {
-
-		if ( object.visible === false ) return;
-
-		if ( object instanceof THREE.Light ) {
-
-			_renderData.lights.push( object );
-
-		} else if ( object instanceof THREE.Mesh || object instanceof THREE.Line || object instanceof THREE.Points ) {
-
-			if ( object.material.visible === false ) return;
-			if ( object.frustumCulled === true && _frustum.intersectsObject( object ) === false ) return;
-
-			addObject( object );
-
-		} else if ( object instanceof THREE.Sprite ) {
-
-			if ( object.material.visible === false ) return;
-			if ( object.frustumCulled === true && _frustum.intersectsSprite( object ) === false ) return;
-
-			addObject( object );
-
-		}
-
-		var children = object.children;
-
-		for ( var i = 0, l = children.length; i < l; i ++ ) {
-
-			projectObject( children[ i ] );
-
-		}
-
-	}
-
-	function addObject( object ) {
-
-		_object = getNextObjectInPool();
-		_object.id = object.id;
-		_object.object = object;
-
-		_vector3.setFromMatrixPosition( object.matrixWorld );
-		_vector3.applyMatrix4( _viewProjectionMatrix );
-		_object.z = _vector3.z;
-		_object.renderOrder = object.renderOrder;
-
-		_renderData.objects.push( _object );
-
-	}
-
-	this.projectScene = function ( scene, camera, sortObjects, sortElements ) {
-
-		_faceCount = 0;
-		_lineCount = 0;
-		_spriteCount = 0;
-
-		_renderData.elements.length = 0;
-
-		if ( scene.autoUpdate === true ) scene.updateMatrixWorld();
-		if ( camera.parent === null ) camera.updateMatrixWorld();
-
-		_viewMatrix.copy( camera.matrixWorldInverse );
-		_viewProjectionMatrix.multiplyMatrices( camera.projectionMatrix, _viewMatrix );
-
-		_frustum.setFromMatrix( _viewProjectionMatrix );
-
-		//
-
-		_objectCount = 0;
-
-		_renderData.objects.length = 0;
-		_renderData.lights.length = 0;
-
-		projectObject( scene );
-
-		if ( sortObjects === true ) {
-
-			_renderData.objects.sort( painterSort );
-
-		}
-
-		//
-
-		var objects = _renderData.objects;
-
-		for ( var o = 0, ol = objects.length; o < ol; o ++ ) {
-
-			var object = objects[ o ].object;
-			var geometry = object.geometry;
-
-			renderList.setObject( object );
-
-			_modelMatrix = object.matrixWorld;
-
-			_vertexCount = 0;
-
-			if ( object instanceof THREE.Mesh ) {
-
-				if ( geometry instanceof THREE.BufferGeometry ) {
-
-					var material = object.material;
-
-					var isMultiMaterial = Array.isArray( material );
-
-					var attributes = geometry.attributes;
-					var groups = geometry.groups;
-
-					if ( attributes.position === undefined ) continue;
-
-					var positions = attributes.position.array;
-
-					for ( var i = 0, l = positions.length; i < l; i += 3 ) {
-
-						var x = positions[ i ];
-						var y = positions[ i + 1 ];
-						var z = positions[ i + 2 ];
-
-						if ( material.morphTargets === true ) {
-
-							var morphTargets = geometry.morphAttributes.position;
-							var morphInfluences = object.morphTargetInfluences;
-
-							for ( var t = 0, tl = morphTargets.length; t < tl; t ++ ) {
-
-								var influence = morphInfluences[ t ];
-
-								if ( influence === 0 ) continue;
-
-								var target = morphTargets[ t ];
-
-								x += ( target.getX( i / 3 ) - positions[ i ] ) * influence;
-								y += ( target.getY( i / 3 ) - positions[ i + 1 ] ) * influence;
-								z += ( target.getZ( i / 3 ) - positions[ i + 2 ] ) * influence;
-
-							}
-
-						}
-
-						renderList.pushVertex( x, y, z );
-
-					}
-
-					if ( attributes.normal !== undefined ) {
-
-						var normals = attributes.normal.array;
-
-						for ( var i = 0, l = normals.length; i < l; i += 3 ) {
-
-							renderList.pushNormal( normals[ i ], normals[ i + 1 ], normals[ i + 2 ] );
-
-						}
-
-					}
-
-					if ( attributes.color !== undefined ) {
-
-						var colors = attributes.color.array;
-
-						for ( var i = 0, l = colors.length; i < l; i += 3 ) {
-
-							renderList.pushColor( colors[ i ], colors[ i + 1 ], colors[ i + 2 ] );
-
-						}
-
-					}
-
-					if ( attributes.uv !== undefined ) {
-
-						var uvs = attributes.uv.array;
-
-						for ( var i = 0, l = uvs.length; i < l; i += 2 ) {
-
-							renderList.pushUv( uvs[ i ], uvs[ i + 1 ] );
-
-						}
-
-					}
-
-					if ( geometry.index !== null ) {
-
-						var indices = geometry.index.array;
-
-						if ( groups.length > 0 ) {
-
-							for ( var g = 0; g < groups.length; g ++ ) {
-
-								var group = groups[ g ];
-
-								material = isMultiMaterial === true
-									 ? object.material[ group.materialIndex ]
-									 : object.material;
-
-								if ( material === undefined ) continue;
-
-								for ( var i = group.start, l = group.start + group.count; i < l; i += 3 ) {
-
-									renderList.pushTriangle( indices[ i ], indices[ i + 1 ], indices[ i + 2 ], material );
-
-								}
-
-							}
-
-						} else {
-
-							for ( var i = 0, l = indices.length; i < l; i += 3 ) {
-
-								renderList.pushTriangle( indices[ i ], indices[ i + 1 ], indices[ i + 2 ], material );
-
-							}
-
-						}
-
-					} else {
-
-						if ( groups.length > 0 ) {
-
-							for ( var g = 0; g < groups.length; g ++ ) {
-
-								var group = groups[ g ];
-
-								material = isMultiMaterial === true
-									 ? object.material[ group.materialIndex ]
-									 : object.material;
-
-								if ( material === undefined ) continue;
-
-								for ( var i = group.start, l = group.start + group.count; i < l; i += 3 ) {
-
-									renderList.pushTriangle( i, i + 1, i + 2, material );
-
-								}
-
-							}
-
-						} else {
-
-							for ( var i = 0, l = positions.length / 3; i < l; i += 3 ) {
-
-								renderList.pushTriangle( i, i + 1, i + 2, material );
-
-							}
-
-						}
-
-					}
-
-				} else if ( geometry instanceof THREE.Geometry ) {
-
-					var vertices = geometry.vertices;
-					var faces = geometry.faces;
-					var faceVertexUvs = geometry.faceVertexUvs[ 0 ];
-
-					_normalMatrix.getNormalMatrix( _modelMatrix );
-
-					var material = object.material;
-
-					var isMultiMaterial = Array.isArray( material );
-
-					for ( var v = 0, vl = vertices.length; v < vl; v ++ ) {
-
-						var vertex = vertices[ v ];
-
-						_vector3.copy( vertex );
-
-						if ( material.morphTargets === true ) {
-
-							var morphTargets = geometry.morphTargets;
-							var morphInfluences = object.morphTargetInfluences;
-
-							for ( var t = 0, tl = morphTargets.length; t < tl; t ++ ) {
-
-								var influence = morphInfluences[ t ];
-
-								if ( influence === 0 ) continue;
-
-								var target = morphTargets[ t ];
-								var targetVertex = target.vertices[ v ];
-
-								_vector3.x += ( targetVertex.x - vertex.x ) * influence;
-								_vector3.y += ( targetVertex.y - vertex.y ) * influence;
-								_vector3.z += ( targetVertex.z - vertex.z ) * influence;
-
-							}
-
-						}
-
-						renderList.pushVertex( _vector3.x, _vector3.y, _vector3.z );
-
-					}
-
-					for ( var f = 0, fl = faces.length; f < fl; f ++ ) {
-
-						var face = faces[ f ];
-
-						material = isMultiMaterial === true
-							 ? object.material[ face.materialIndex ]
-							 : object.material;
-
-						if ( material === undefined ) continue;
-
-						var side = material.side;
-
-						var v1 = _vertexPool[ face.a ];
-						var v2 = _vertexPool[ face.b ];
-						var v3 = _vertexPool[ face.c ];
-
-						if ( renderList.checkTriangleVisibility( v1, v2, v3 ) === false ) continue;
-
-						var visible = renderList.checkBackfaceCulling( v1, v2, v3 );
-
-						if ( side !== THREE.DoubleSide ) {
-
-							if ( side === THREE.FrontSide && visible === false ) continue;
-							if ( side === THREE.BackSide && visible === true ) continue;
-
-						}
-
-						_face = getNextFaceInPool();
-
-						_face.id = object.id;
-						_face.v1.copy( v1 );
-						_face.v2.copy( v2 );
-						_face.v3.copy( v3 );
-
-						_face.normalModel.copy( face.normal );
-
-						if ( visible === false && ( side === THREE.BackSide || side === THREE.DoubleSide ) ) {
-
-							_face.normalModel.negate();
-
-						}
-
-						_face.normalModel.applyMatrix3( _normalMatrix ).normalize();
-
-						var faceVertexNormals = face.vertexNormals;
-
-						for ( var n = 0, nl = Math.min( faceVertexNormals.length, 3 ); n < nl; n ++ ) {
-
-							var normalModel = _face.vertexNormalsModel[ n ];
-							normalModel.copy( faceVertexNormals[ n ] );
-
-							if ( visible === false && ( side === THREE.BackSide || side === THREE.DoubleSide ) ) {
-
-								normalModel.negate();
-
-							}
-
-							normalModel.applyMatrix3( _normalMatrix ).normalize();
-
-						}
-
-						_face.vertexNormalsLength = faceVertexNormals.length;
-
-						var vertexUvs = faceVertexUvs[ f ];
-
-						if ( vertexUvs !== undefined ) {
-
-							for ( var u = 0; u < 3; u ++ ) {
-
-								_face.uvs[ u ].copy( vertexUvs[ u ] );
-
-							}
-
-						}
-
-						_face.color = face.color;
-						_face.material = material;
-
-						_face.z = ( v1.positionScreen.z + v2.positionScreen.z + v3.positionScreen.z ) / 3;
-						_face.renderOrder = object.renderOrder;
-
-						_renderData.elements.push( _face );
-
-					}
-
-				}
-
-			} else if ( object instanceof THREE.Line ) {
-
-				_modelViewProjectionMatrix.multiplyMatrices( _viewProjectionMatrix, _modelMatrix );
-
-				if ( geometry instanceof THREE.BufferGeometry ) {
-
-					var attributes = geometry.attributes;
-
-					if ( attributes.position !== undefined ) {
-
-						var positions = attributes.position.array;
-
-						for ( var i = 0, l = positions.length; i < l; i += 3 ) {
-
-							renderList.pushVertex( positions[ i ], positions[ i + 1 ], positions[ i + 2 ] );
-
-						}
-
-						if ( attributes.color !== undefined ) {
-
-							var colors = attributes.color.array;
-
-							for ( var i = 0, l = colors.length; i < l; i += 3 ) {
-
-								renderList.pushColor( colors[ i ], colors[ i + 1 ], colors[ i + 2 ] );
-
-							}
-
-						}
-
-						if ( geometry.index !== null ) {
-
-							var indices = geometry.index.array;
-
-							for ( var i = 0, l = indices.length; i < l; i += 2 ) {
-
-								renderList.pushLine( indices[ i ], indices[ i + 1 ] );
-
-							}
-
-						} else {
-
-							var step = object instanceof THREE.LineSegments ? 2 : 1;
-
-							for ( var i = 0, l = ( positions.length / 3 ) - 1; i < l; i += step ) {
-
-								renderList.pushLine( i, i + 1 );
-
-							}
-
-						}
-
-					}
-
-				} else if ( geometry instanceof THREE.Geometry ) {
-
-					var vertices = object.geometry.vertices;
-
-					if ( vertices.length === 0 ) continue;
-
-					v1 = getNextVertexInPool();
-					v1.positionScreen.copy( vertices[ 0 ] ).applyMatrix4( _modelViewProjectionMatrix );
-
-					var step = object instanceof THREE.LineSegments ? 2 : 1;
-
-					for ( var v = 1, vl = vertices.length; v < vl; v ++ ) {
-
-						v1 = getNextVertexInPool();
-						v1.positionScreen.copy( vertices[ v ] ).applyMatrix4( _modelViewProjectionMatrix );
-
-						if ( ( v + 1 ) % step > 0 ) continue;
-
-						v2 = _vertexPool[ _vertexCount - 2 ];
-
-						_clippedVertex1PositionScreen.copy( v1.positionScreen );
-						_clippedVertex2PositionScreen.copy( v2.positionScreen );
-
-						if ( clipLine( _clippedVertex1PositionScreen, _clippedVertex2PositionScreen ) === true ) {
-
-							// Perform the perspective divide
-							_clippedVertex1PositionScreen.multiplyScalar( 1 / _clippedVertex1PositionScreen.w );
-							_clippedVertex2PositionScreen.multiplyScalar( 1 / _clippedVertex2PositionScreen.w );
-
-							_line = getNextLineInPool();
-
-							_line.id = object.id;
-							_line.v1.positionScreen.copy( _clippedVertex1PositionScreen );
-							_line.v2.positionScreen.copy( _clippedVertex2PositionScreen );
-
-							_line.z = Math.max( _clippedVertex1PositionScreen.z, _clippedVertex2PositionScreen.z );
-							_line.renderOrder = object.renderOrder;
-
-							_line.material = object.material;
-
-							if ( object.material.vertexColors === THREE.VertexColors ) {
-
-								_line.vertexColors[ 0 ].copy( object.geometry.colors[ v ] );
-								_line.vertexColors[ 1 ].copy( object.geometry.colors[ v - 1 ] );
-
-							}
-
-							_renderData.elements.push( _line );
-
-						}
-
-					}
-
-				}
-
-			} else if ( object instanceof THREE.Points ) {
-
-				_modelViewProjectionMatrix.multiplyMatrices( _viewProjectionMatrix, _modelMatrix );
-
-				if ( geometry instanceof THREE.Geometry ) {
-
-					var vertices = object.geometry.vertices;
-
-					for ( var v = 0, vl = vertices.length; v < vl; v ++ ) {
-
-						var vertex = vertices[ v ];
-
-						_vector4.set( vertex.x, vertex.y, vertex.z, 1 );
-						_vector4.applyMatrix4( _modelViewProjectionMatrix );
-
-						pushPoint( _vector4, object, camera );
-
-					}
-
-				} else if ( geometry instanceof THREE.BufferGeometry ) {
-
-					var attributes = geometry.attributes;
-
-					if ( attributes.position !== undefined ) {
-
-						var positions = attributes.position.array;
-
-						for ( var i = 0, l = positions.length; i < l; i += 3 ) {
-
-							_vector4.set( positions[ i ], positions[ i + 1 ], positions[ i + 2 ], 1 );
-							_vector4.applyMatrix4( _modelViewProjectionMatrix );
-
-							pushPoint( _vector4, object, camera );
-
-						}
-
-					}
-
-				}
-
-			} else if ( object instanceof THREE.Sprite ) {
-
-				object.modelViewMatrix.multiplyMatrices( camera.matrixWorldInverse, object.matrixWorld );
-				_vector4.set( _modelMatrix.elements[ 12 ], _modelMatrix.elements[ 13 ], _modelMatrix.elements[ 14 ], 1 );
-				_vector4.applyMatrix4( _viewProjectionMatrix );
-
-				pushPoint( _vector4, object, camera );
-
-			}
-
-		}
-
-		if ( sortElements === true ) {
-
-			_renderData.elements.sort( painterSort );
-
-		}
-
-		return _renderData;
-
-	};
-
-	function pushPoint( _vector4, object, camera ) {
-
-		var invW = 1 / _vector4.w;
-
-		_vector4.z *= invW;
-
-		if ( _vector4.z >= - 1 && _vector4.z <= 1 ) {
-
-			_sprite = getNextSpriteInPool();
-			_sprite.id = object.id;
-			_sprite.x = _vector4.x * invW;
-			_sprite.y = _vector4.y * invW;
-			_sprite.z = _vector4.z;
-			_sprite.renderOrder = object.renderOrder;
-			_sprite.object = object;
-
-			_sprite.rotation = object.rotation;
-
-			_sprite.scale.x = object.scale.x * Math.abs( _sprite.x - ( _vector4.x + camera.projectionMatrix.elements[ 0 ] ) / ( _vector4.w + camera.projectionMatrix.elements[ 12 ] ) );
-			_sprite.scale.y = object.scale.y * Math.abs( _sprite.y - ( _vector4.y + camera.projectionMatrix.elements[ 5 ] ) / ( _vector4.w + camera.projectionMatrix.elements[ 13 ] ) );
-
-			_sprite.material = object.material;
-
-			_renderData.elements.push( _sprite );
-
-		}
-
-	}
-
-	// Pools
-
-	function getNextObjectInPool() {
-
-		if ( _objectCount === _objectPoolLength ) {
-
-			var object = new THREE.RenderableObject();
-			_objectPool.push( object );
-			_objectPoolLength ++;
-			_objectCount ++;
-			return object;
-
-		}
-
-		return _objectPool[ _objectCount ++ ];
-
-	}
-
-	function getNextVertexInPool() {
-
-		if ( _vertexCount === _vertexPoolLength ) {
-
-			var vertex = new THREE.RenderableVertex();
-			_vertexPool.push( vertex );
-			_vertexPoolLength ++;
-			_vertexCount ++;
-			return vertex;
-
-		}
-
-		return _vertexPool[ _vertexCount ++ ];
-
-	}
-
-	function getNextFaceInPool() {
-
-		if ( _faceCount === _facePoolLength ) {
-
-			var face = new THREE.RenderableFace();
-			_facePool.push( face );
-			_facePoolLength ++;
-			_faceCount ++;
-			return face;
-
-		}
-
-		return _facePool[ _faceCount ++ ];
-
-
-	}
-
-	function getNextLineInPool() {
-
-		if ( _lineCount === _linePoolLength ) {
-
-			var line = new THREE.RenderableLine();
-			_linePool.push( line );
-			_linePoolLength ++;
-			_lineCount ++;
-			return line;
-
-		}
-
-		return _linePool[ _lineCount ++ ];
-
-	}
-
-	function getNextSpriteInPool() {
-
-		if ( _spriteCount === _spritePoolLength ) {
-
-			var sprite = new THREE.RenderableSprite();
-			_spritePool.push( sprite );
-			_spritePoolLength ++;
-			_spriteCount ++;
-			return sprite;
-
-		}
-
-		return _spritePool[ _spriteCount ++ ];
-
-	}
-
-	//
-
-	function painterSort( a, b ) {
-
-		if ( a.renderOrder !== b.renderOrder ) {
-
-			return a.renderOrder - b.renderOrder;
-
-		} else if ( a.z !== b.z ) {
-
-			return b.z - a.z;
-
-		} else if ( a.id !== b.id ) {
-
-			return a.id - b.id;
-
-		} else {
-
-			return 0;
-
-		}
-
-	}
-
-	function clipLine( s1, s2 ) {
-
-		var alpha1 = 0, alpha2 = 1,
-
-			// Calculate the boundary coordinate of each vertex for the near and far clip planes,
-			// Z = -1 and Z = +1, respectively.
-
-			bc1near = s1.z + s1.w,
-			bc2near = s2.z + s2.w,
-			bc1far = - s1.z + s1.w,
-			bc2far = - s2.z + s2.w;
-
-		if ( bc1near >= 0 && bc2near >= 0 && bc1far >= 0 && bc2far >= 0 ) {
-
-			// Both vertices lie entirely within all clip planes.
-			return true;
-
-		} else if ( ( bc1near < 0 && bc2near < 0 ) || ( bc1far < 0 && bc2far < 0 ) ) {
-
-			// Both vertices lie entirely outside one of the clip planes.
-			return false;
-
-		} else {
-
-			// The line segment spans at least one clip plane.
-
-			if ( bc1near < 0 ) {
-
-				// v1 lies outside the near plane, v2 inside
-				alpha1 = Math.max( alpha1, bc1near / ( bc1near - bc2near ) );
-
-			} else if ( bc2near < 0 ) {
-
-				// v2 lies outside the near plane, v1 inside
-				alpha2 = Math.min( alpha2, bc1near / ( bc1near - bc2near ) );
-
-			}
-
-			if ( bc1far < 0 ) {
-
-				// v1 lies outside the far plane, v2 inside
-				alpha1 = Math.max( alpha1, bc1far / ( bc1far - bc2far ) );
-
-			} else if ( bc2far < 0 ) {
-
-				// v2 lies outside the far plane, v2 inside
-				alpha2 = Math.min( alpha2, bc1far / ( bc1far - bc2far ) );
-
-			}
-
-			if ( alpha2 < alpha1 ) {
-
-				// The line segment spans two boundaries, but is outside both of them.
-				// (This can't happen when we're only clipping against just near/far but good
-				//  to leave the check here for future usage if other clip planes are added.)
-				return false;
-
-			} else {
-
-				// Update the s1 and s2 vertices to match the clipped line segment.
-				s1.lerp( s2, alpha1 );
-				s2.lerp( s1, 1 - alpha2 );
-
-				return true;
-
-			}
-
-		}
-
-	}
-
-};
-
- return THREE.Projector;
-});
 // This THREEx helper makes it easy to handle the mouse events in your 3D scene
 //
 // * CHANGES NEEDED
@@ -1264,12 +154,12 @@ THREE.Projector = function () {
 //
 // First you include it in your page
 //
-// ```<script src='threex.domevent.js'>< /script>```
+// ```<script src='threex.domevent.js'></script>```
 //
 // # use the object oriented api
 //
 // You bind an event like this
-// 
+//
 // ```mesh.on('click', function(object3d){ ... })```
 //
 // To unbind an event, just do
@@ -1290,18 +180,11 @@ THREE.Projector = function () {
 // [click, dblclick, mouseup, mousedown](http://www.quirksmode.org/dom/events/click.html),
 // [mouseover and mouse out](http://www.quirksmode.org/dom/events/mouseover.html).
 //
-// # use the standalone api
-//
-// The object-oriented api modifies THREE.Object3D class.
-// It is a global class, so it may be legitimatly considered unclean by some people.
-// If this bother you, simply do ```THREEx.DomEvents.noConflict()``` and use the
-// standalone API. In fact, the object oriented API is just a thin wrapper
-// on top of the standalone API.
 //
 // First, you instanciate the object
 //
-// ```var domEvent = new THREEx.DomEvent();```
-// 
+// ```var domEvent = new DomEvent();```
+//
 // Then you bind an event like this
 //
 // ```domEvent.bind(mesh, 'click', function(object3d){ object3d.scale.x *= 2; });```
@@ -1310,32 +193,33 @@ THREE.Projector = function () {
 //
 // ```domEvent.unbind(mesh, 'click', callback);```
 //
-// 
+//
 // # Code
 
 //
 
-/** @namespace */
-/**
- * 
- * @param {type} THREE
- * @returns {DomeventsL#71.DomEvents}
- */
-define('core/Domevents',["three", "vendor/three/renderers/Projector"], function( THREE ){
-    
+	/** @namespace */
+let TOUCH_MS = 200;
+let TOUCH_TIMER;
+let onlongtouch;
+let touchduration = 500;
+let TOUCH_BEGIN, TOUCH_LATEST = 0;
+let TOUCH_POSX, TOUCH_POSY;
 
 // # Constructor
-var DomEvents	= function( camera, domElement )
+let DomEvents = function( camera, domElement )
 {
-	this._camera	= camera || null;
-	this._domElement= domElement || document;
-	this._projector	= new THREE.Projector();
-	this._selected	= null;
-	this._boundObjs	= {};
+	this._camera		= camera || null;
+	this._domElement 	= domElement || document;
+	this._ray 			= new THREE.Raycaster();
+	this._selected		= null;
+	this._boundObjs		= {};
 	// Bind dom event for mouse and touch
-	var _this	= this;
+	let _this			= this;
+	this.firstClick 	= false;
+	this.delay = 300;
 
-	this._$onClick		= function(){ _this._onClick.apply(_this, arguments);		};
+	this._$onClick		= function(){ _this._onClick.apply(_this, arguments); 	};
 	this._$onDblClick	= function(){ _this._onDblClick.apply(_this, arguments);	};
 	this._$onMouseMove	= function(){ _this._onMouseMove.apply(_this, arguments);	};
 	this._$onMouseDown	= function(){ _this._onMouseDown.apply(_this, arguments);	};
@@ -1344,6 +228,7 @@ var DomEvents	= function( camera, domElement )
 	this._$onTouchStart	= function(){ _this._onTouchStart.apply(_this, arguments);	};
 	this._$onTouchEnd	= function(){ _this._onTouchEnd.apply(_this, arguments);	};
 	this._$onContextmenu	= function(){ _this._onContextmenu.apply(_this, arguments);	};
+
 	this._domElement.addEventListener( 'click'	, this._$onClick	, false );
 	this._domElement.addEventListener( 'dblclick'	, this._$onDblClick	, false );
 	this._domElement.addEventListener( 'mousemove'	, this._$onMouseMove	, false );
@@ -1353,22 +238,6 @@ var DomEvents	= function( camera, domElement )
 	this._domElement.addEventListener( 'touchstart'	, this._$onTouchStart	, false );
 	this._domElement.addEventListener( 'touchend'	, this._$onTouchEnd	, false );
 	this._domElement.addEventListener( 'contextmenu', this._$onContextmenu	, false );
-	
-};
-
-// # Destructor
-DomEvents.prototype.destroy	= function()
-{
-	// unBind dom event for mouse and touch
-	this._domElement.removeEventListener( 'click'		, this._$onClick	, false );
-	this._domElement.removeEventListener( 'dblclick'	, this._$onDblClick	, false );
-	this._domElement.removeEventListener( 'mousemove'	, this._$onMouseMove	, false );
-	this._domElement.removeEventListener( 'mousedown'	, this._$onMouseDown	, false );
-	this._domElement.removeEventListener( 'mouseup'		, this._$onMouseUp	, false );
-	this._domElement.removeEventListener( 'touchmove'	, this._$onTouchMove	, false );
-	this._domElement.removeEventListener( 'touchstart'	, this._$onTouchStart	, false );
-	this._domElement.removeEventListener( 'touchend'	, this._$onTouchEnd	, false );
-	this._domElement.removeEventListener( 'contextmenu'	, this._$onContextmenu	, false );
 };
 
 DomEvents.eventNames	= [
@@ -1379,359 +248,543 @@ DomEvents.eventNames	= [
 	"mousemove",
 	"mousedown",
 	"mouseup",
-	"contextmenu"
+	"contextmenu",
+	"touchstart",
+	"touchend"
 ];
-
-DomEvents.prototype._getRelativeMouseXY	= function(domEvent){
-	var element = domEvent.target || domEvent.srcElement;
-	if (element.nodeType === 3) {
-		element = element.parentNode; // Safari fix -- see http://www.quirksmode.org/js/events_properties.html
-	}
-	
-	//get the real position of an element relative to the page starting point (0, 0)
-	//credits go to brainjam on answering http://stackoverflow.com/questions/5755312/getting-mouse-position-relative-to-content-area-of-an-element
-	var elPosition	= { x : 0 , y : 0};
-	var tmpElement	= element;
-	//store padding
-	var style	= getComputedStyle(tmpElement, null);
-	elPosition.y += parseInt(style.getPropertyValue("padding-top"), 10);
-	elPosition.x += parseInt(style.getPropertyValue("padding-left"), 10);
-	//add positions
-	do {
-		elPosition.x	+= tmpElement.offsetLeft;
-		elPosition.y	+= tmpElement.offsetTop;
-		style		= getComputedStyle(tmpElement, null);
-
-		elPosition.x	+= parseInt(style.getPropertyValue("border-left-width"), 10);
-		elPosition.y	+= parseInt(style.getPropertyValue("border-top-width"), 10);
-	} while( tmpElement = tmpElement.offsetParent );
-	
-	var elDimension	= {
-		width	: (element === window) ? window.innerWidth	: element.offsetWidth,
-		height	: (element === window) ? window.innerHeight	: element.offsetHeight
-	};
-	
-	return {
-		x : +((domEvent.pageX - elPosition.x) / elDimension.width ) * 2 - 1,
-		y : -((domEvent.pageY - elPosition.y) / elDimension.height) * 2 + 1
-	};
+DomEvents.hasEvent = function( eventName ){
+	return DomEvents.eventNames.indexOf( eventName ) !== -1;
 };
 
+Object.assign( DomEvents.prototype,  {
 
-/********************************************************************************/
-/*		domevent context						*/
-/********************************************************************************/
-
-// handle domevent context in object3d instance
-
-DomEvents.prototype._objectCtxInit	= function(object3d){
-	object3d._3xDomEvent = {};
-};
-DomEvents.prototype._objectCtxDeinit	= function(object3d){
-	delete object3d._3xDomEvent;
-};
-DomEvents.prototype._objectCtxIsInit	= function(object3d){
-	return object3d._3xDomEvent ? true : false;
-};
-DomEvents.prototype._objectCtxGet		= function(object3d){
-	return object3d._3xDomEvent;
-};
-
-/********************************************************************************/
-/*										*/
-/********************************************************************************/
-
-/**
- * Getter/Setter for camera
- * @argument {camera} value 
-*/
-DomEvents.prototype.camera	= function(value)
-{
-    if( value )	this._camera	= value;
-    return this._camera;
-};
-
-DomEvents.prototype.bind	= function(object3d, eventName, callback, useCapture)
-{
-	console.assert( DomEvents.eventNames.indexOf(eventName) !== -1, "not available events:"+eventName );
-
-	if( !this._objectCtxIsInit(object3d) )	this._objectCtxInit(object3d);
-	var objectCtx	= this._objectCtxGet(object3d);	
-	if( !objectCtx[eventName+'Handlers'] )	objectCtx[eventName+'Handlers']	= [];
-
-	objectCtx[eventName+'Handlers'].push({
-		callback	: callback,
-		useCapture	: useCapture
-	});
-	
-	// add this object in this._boundObjs
-	if( this._boundObjs[eventName] === undefined ){
-		this._boundObjs[eventName]	= [];	
-	}
-	this._boundObjs[eventName].push(object3d);
-};
-DomEvents.prototype.addEventListener	= DomEvents.prototype.bind;
-
-DomEvents.prototype.unbind	= function(object3d, eventName, callback, useCapture)
-{
-	console.assert( DomEvents.eventNames.indexOf(eventName) !== -1, "not available events:"+eventName );
-
-	if( !this._objectCtxIsInit(object3d) )	this._objectCtxInit(object3d);
-
-	var objectCtx	= this._objectCtxGet(object3d);
-	if( !objectCtx[eventName+'Handlers'] )	objectCtx[eventName+'Handlers']	= [];
-
-	var handlers	= objectCtx[eventName+'Handlers'];
-	for(var i = 0; i < handlers.length; i++){
-		var handler	= handlers[i];
-		if( callback != handler.callback )	continue;
-		if( useCapture != handler.useCapture )	continue;
-		handlers.splice(i, 1);
-		break;
-	}
-	// from this object from this._boundObjs
-	var index	= this._boundObjs[eventName].indexOf(object3d);
-	console.assert( index !== -1 );
-	this._boundObjs[eventName].splice(index, 1);
-};
-DomEvents.prototype.removeEventListener	= DomEvents.prototype.unbind;
-
-DomEvents.prototype._bound	= function(eventName, object3d)
-{
-	var objectCtx	= this._objectCtxGet(object3d);
-	if( !objectCtx )	return false;
-	return objectCtx[eventName+'Handlers'] ? true : false;
-};
-
-/********************************************************************************/
-/*		onMove								*/
-/********************************************************************************/
-
-// # handle mousemove kind of events
-
-DomEvents.prototype._onMove	= function(eventName, mouseX, mouseY, origDomEvent)
-{
-//console.log('eventName', eventName, 'boundObjs', this._boundObjs[eventName])
-	// get objects bound to this event
-	var boundObjs	= this._boundObjs[eventName];
-	if( boundObjs === undefined || boundObjs.length === 0 )	return;
-	// compute the intersection
-	var vector = new THREE.Vector3();
-	var raycaster = new THREE.Raycaster();
-	var dir = new THREE.Vector3();
-
-	if ( this._camera instanceof THREE.OrthographicCamera ) {
-
-	    vector.set( mouseX, mouseY, -1 );
-	    vector.unproject( this._camera );
-	    dir.set( 0, 0, - 1 ).transformDirection( this._camera.matrixWorld );
-	    raycaster.set( vector, dir );
-
-	} else if ( this._camera instanceof THREE.PerspectiveCamera ) {
-
-	    vector.set( mouseX, mouseY, 0.5 );
-	    vector.unproject( this._camera );
-	    raycaster.set( this._camera.position, vector.sub( this._camera.position ).normalize() );
-	}
-
-	var intersects = raycaster.intersectObjects( boundObjs );
+	// # Destructor
+	destroy	: function()
+	{
+		// unBind dom event for mouse and touch
+		this._domElement.removeEventListener( 'click'		, this._$onClick	, false );
+		this._domElement.removeEventListener( 'dblclick'	, this._$onDblClick	, false );
+		this._domElement.removeEventListener( 'mousemove'	, this._$onMouseMove	, false );
+		this._domElement.removeEventListener( 'mousedown'	, this._$onMouseDown	, false );
+		this._domElement.removeEventListener( 'mouseup'		, this._$onMouseUp	, false );
+		this._domElement.removeEventListener( 'touchmove'	, this._$onTouchMove	, false );
+		this._domElement.removeEventListener( 'touchstart'	, this._$onTouchStart	, false );
+		this._domElement.removeEventListener( 'touchend'	, this._$onTouchEnd	, false );
+		this._domElement.removeEventListener( 'contextmenu'	, this._$onContextmenu	, false );
+	},
 
 
+	_getRelativeMouseXY	: function( domEvent ){
+		let element = domEvent.target || domEvent.srcElement;
 
-	var oldSelected	= this._selected;
-	
-	if( intersects.length > 0 ){
-		var notifyOver, notifyOut, notifyMove;
-		var intersect	= intersects[ 0 ];
-		var newSelected	= intersect.object;
-		this._selected	= newSelected;
-		// if newSelected bound mousemove, notify it
-		notifyMove	= this._bound('mousemove', newSelected);
+		if (element.nodeType === 3) {
+			element = element.parentNode; // Safari fix -- see http://www.quirksmode.org/js/events_properties.html
+		}
 
-		if( oldSelected != newSelected ){
-			// if newSelected bound mouseenter, notify it
-			notifyOver	= this._bound('mouseover', newSelected);
+		//get the real position of an element relative to the page starting point (0, 0)
+		//credits go to brainjam on answering http://stackoverflow.com/questions/5755312/getting-mouse-position-relative-to-content-area-of-an-element
+		let elPosition	= { x : 0 , y : 0};
+		let tmpElement	= element;
+		//store padding
+		let style	= getComputedStyle(tmpElement, null);
+		elPosition.y += parseInt(style.getPropertyValue("padding-top"), 10);
+		elPosition.x += parseInt(style.getPropertyValue("padding-left"), 10);
+
+		//add positions
+		do {
+			elPosition.x	+= tmpElement.offsetLeft;
+			elPosition.y	+= tmpElement.offsetTop;
+			style		= getComputedStyle(tmpElement, null);
+
+			elPosition.x	+= parseInt(style.getPropertyValue("border-left-width"), 10);
+			elPosition.y	+= parseInt(style.getPropertyValue("border-top-width"), 10);
+		} while(tmpElement = tmpElement.offsetParent);
+
+		let elDimension	= {
+			width	: (element === window) ? window.innerWidth	: element.offsetWidth,
+			height	: (element === window) ? window.innerHeight	: element.offsetHeight
+		};
+
+		if ( domEvent.type === "touchend" || domEvent.type === "touchstart" ){
+			return {
+				x : +((domEvent.changedTouches[ 0 ].pageX - elPosition.x) / elDimension.width ) * 2 - 1,
+				y : -((domEvent.changedTouches[ 0 ].pageY - elPosition.y) / elDimension.height) * 2 + 1
+			};
+		}
+		else{
+			return {
+				x : +((domEvent.pageX - elPosition.x) / elDimension.width ) * 2 - 1,
+				y : -((domEvent.pageY - elPosition.y) / elDimension.height) * 2 + 1
+			};
+		}
+	},
+
+
+	/********************************************************************************/
+	/*		domevent context						*/
+	/********************************************************************************/
+
+	// handle domevent context in object3d instance
+
+	_objectCtxInit	: function( object3d ){
+		object3d._3xDomEvent = {};
+	},
+	_objectCtxDeinit : function( object3d ){
+		delete object3d._3xDomEvent;
+	},
+	_objectCtxIsInit : function( object3d ){
+		return !!object3d._3xDomEvent;
+	},
+	_objectCtxGet : function( object3d ){
+		return object3d._3xDomEvent;
+	},
+	/********************************************************************************/
+	/*										*/
+	/********************************************************************************/
+
+
+	/**
+	 * Getter/Setter for camera
+	 */
+	camera : function( value )
+	{
+		if( value )	this._camera = value;
+		return this._camera;
+	},
+
+	addEventListener : function( object3d, eventName, callback, useCapture ){
+		if ( typeof eventName == "object" ) {
+			for ( let i = 0; i<eventName.length; i++){
+				this.bind(object3d, eventName[i], callback, useCapture);
+			}
+			return;
+		}
+
+		this.bind(object3d, eventName, callback, useCapture);
+	},
+
+	bind : function( object3d, eventName, callback, useCapture )
+	{
+		if ( !DomEvents.hasEvent( eventName ) ) {
+			console.warn( "not available events: "+eventName, object3d );
+			return;
+		}
+
+		if( !this._objectCtxIsInit( object3d ) )	this._objectCtxInit( object3d );
+		let objectCtx = this._objectCtxGet( object3d );
+		if( !objectCtx[eventName+'Handlers'] )	objectCtx[eventName+'Handlers']	= [];
+
+		objectCtx[eventName+'Handlers'].push({
+			callback	: callback,
+			useCapture	: useCapture
+		});
+
+		// add this object in this._boundObjs
+		if( this._boundObjs[eventName] === undefined ){
+			this._boundObjs[eventName]	= [];
+		}
+		this._boundObjs[eventName].push( object3d );
+	},
+
+	removeEventListener	: function( object3d, eventName, callback, useCapture ){
+		if ( eventName === null || eventName === undefined ){
+			eventName = DomEvents.eventNames;
+			return;
+		}
+		if ( typeof eventName == "object"){
+			for ( let i = 0; i<eventName.length; i++){
+				this.unbind(object3d, eventName[i], callback, useCapture);
+			}
+			return;
+		}
+		this.unbind (object3d, eventName, callback, useCapture);
+	},
+
+	unbind : function( object3d, eventName, callback, useCapture )
+	{
+		if ( typeof eventName !== "string" ) {
+			console.error( "ERROR: DomEvents:unbind eventName must be a string" );
+			return;
+		}
+
+		console.assert( DomEvents.hasEvent( eventName ), "not available events:"+eventName );
+
+		let boundObjs = this._boundObjs[eventName];
+		if (boundObjs == undefined) {
+			return;
+		}
+
+		if( !this._objectCtxIsInit(object3d) )	{
+                    this._objectCtxInit(object3d);
+                }
+
+		let objectCtx	= this._objectCtxGet(object3d);
+		if( !objectCtx[eventName+'Handlers'] )	objectCtx[eventName+'Handlers']	= [];
+
+		let handlers	= objectCtx[eventName+'Handlers'];
+                
+		if (typeof callback !== "function") {   // kill all events of this type
+			delete objectCtx[eventName+'Handlers'];
+			let index = boundObjs.indexOf( object3d );
+			if (index > -1) boundObjs.splice( index, 1 );
+			return;
+		}
+
+		for( let i = 0; i < handlers.length; i++ ){
+			let handler = handlers[i];
+			if( callback !== handler.callback )	continue;
+			if( useCapture !== handler.useCapture )	continue;
+			handlers.splice( i, 1 );
+			break;
+		}
+
+		// from this object from this._boundObjs
+		let index = boundObjs.indexOf( object3d );
+		if ( index !== -1 ) {
+			return;
+		}
+
+		boundObjs.splice( index, 1 );
+		this.clean();
+
+	},
+
+	clean : function( )
+	{
+		let a;
+		let eventName;
+		let boundObjs;
+
+		for( let i = 0; i < DomEvents.eventNames.length; i++ ) {
+			eventName = DomEvents.eventNames[i];
+			boundObjs = this._boundObjs[eventName];
+			a = [];
+
+			if (boundObjs){
+				for ( let i = 0, l = boundObjs.length; i < l; i ++ ) {
+
+					if ( boundObjs[i].geometry ) { a.push(boundObjs[i]); }
+
+				}
+				this._boundObjs[eventName] = a;
+			}
+		}
+	},
+
+	_bound	: function( eventName, object3d )
+	{
+		let objectCtx = this._objectCtxGet( object3d );
+		if( !objectCtx ) return false;
+		return !!objectCtx[eventName+'Handlers'];
+	},
+
+
+	/********************************************************************************/
+	/*		onMove								*/
+	/********************************************************************************/
+
+	// # handle mousemove kind of events
+
+	_onMove	: function( eventName, mouseX, mouseY, origDomEvent )
+	{
+		//console.log('eventName', eventName, 'boundObjs', this._boundObjs[eventName])
+		// get objects bound to this event
+		let boundObjs	= this._boundObjs[eventName];
+		if( boundObjs === undefined || boundObjs.length === 0 )	return;
+
+		// compute the intersection
+		let vector = new THREE.Vector3( mouseX, mouseY, 0.5 );
+		this._ray.setFromCamera( vector, this._camera );
+
+		let intersects = null;
+		try {
+			intersects  = this._ray.intersectObjects( boundObjs );
+		} catch( e ){
+			this.clean();
+			this._onMove( eventName, mouseX, mouseY, origDomEvent );
+			return;
+		}
+
+		let oldSelected	= this._selected;
+		let notifyOver, notifyOut, notifyMove;
+		let intersect;
+		let newSelected;
+
+		if( intersects.length > 0 ){
+			intersect	= intersects[ 0 ];
+			newSelected	= intersect.object;
+
+			this._selected	= newSelected;
+			// if newSelected bound mousemove, notify it
+			notifyMove	= this._bound('mousemove', newSelected);
+
+			if( oldSelected !== newSelected ){
+				// if newSelected bound mouseenter, notify it
+				notifyOver	= this._bound('mouseover', newSelected);
+				// if there is a oldSelect and oldSelected bound mouseleave, notify it
+				notifyOut	= oldSelected && this._bound('mouseout', oldSelected);
+			}
+		}else{
 			// if there is a oldSelect and oldSelected bound mouseleave, notify it
 			notifyOut	= oldSelected && this._bound('mouseout', oldSelected);
+			this._selected	= null;
 		}
-	}else{
-		// if there is a oldSelect and oldSelected bound mouseleave, notify it
-		notifyOut	= oldSelected && this._bound('mouseout', oldSelected);
-		this._selected	= null;
-	}
+
+		// notify mouseMove - done at the end with a copy of the list to allow callback to remove handlers
+		notifyMove && this._notify('mousemove', newSelected, origDomEvent, intersect);
+		// notify mouseEnter - done at the end with a copy of the list to allow callback to remove handlers
+		notifyOver && this._notify('mouseover', newSelected, origDomEvent, intersect);
+		// notify mouseLeave - done at the end with a copy of the list to allow callback to remove handlers
+		notifyOut  && this._notify('mouseout' , oldSelected, origDomEvent, intersect);
+	},
 
 
-	// notify mouseMove - done at the end with a copy of the list to allow callback to remove handlers
-	notifyMove && this._notify('mousemove', newSelected, origDomEvent, intersect);
-	// notify mouseEnter - done at the end with a copy of the list to allow callback to remove handlers
-	notifyOver && this._notify('mouseover', newSelected, origDomEvent, intersect);
-	// notify mouseLeave - done at the end with a copy of the list to allow callback to remove handlers
-	notifyOut  && this._notify('mouseout' , oldSelected, origDomEvent, intersect);
-};
+	/********************************************************************************/
+	/*		onEvent								*/
+	/********************************************************************************/
 
+	// # handle click kind of events
 
-/********************************************************************************/
-/*		onEvent								*/
-/********************************************************************************/
-
-// # handle click kind of events
-
-DomEvents.prototype._onEvent	= function(eventName, mouseX, mouseY, origDomEvent)
-{
-	//console.log('eventName', eventName, 'boundObjs', this._boundObjs[eventName])
-	// get objects bound to this event
-	var boundObjs	= this._boundObjs[eventName];
-	if( boundObjs === undefined || boundObjs.length === 0 )	return;
-	// compute the intersection
-	var vector = new THREE.Vector3();
-	var raycaster = new THREE.Raycaster();
-	var dir = new THREE.Vector3();
-
-	if ( this._camera instanceof THREE.OrthographicCamera ) {
-
-	    vector.set( mouseX, mouseY, -1 );
-	    vector.unproject( this._camera );
-	    dir.set( 0, 0, - 1 ).transformDirection( this._camera.matrixWorld );
-	    raycaster.set( vector, dir );
-
-	} else if ( this._camera instanceof THREE.PerspectiveCamera ) {
-
-	    vector.set( mouseX, mouseY, 0.5 );
-	    vector.unproject( this._camera );
-	    raycaster.set( this._camera.position, vector.sub( this._camera.position ).normalize() );
-	}
-
-	var intersects = raycaster.intersectObjects( boundObjs, true);
-	// if there are no intersections, return now
-	if( intersects.length === 0 )	return;
-
-	// init some variables
-	var intersect	= intersects[0];
-	var object3d	= intersect.object;
-	var objectCtx	= this._objectCtxGet(object3d);
-	var objectParent = object3d.parent;
-
-	while ( typeof(objectCtx) == 'undefined' && objectParent )
+	_onEvent	: function( eventName, mouseX, mouseY, origDomEvent )
 	{
-	    objectCtx = this._objectCtxGet(objectParent);
-	    objectParent = objectParent.parent;
-	}
-	if( !objectCtx )	return;
+	//console.log('eventName', eventName, 'boundObjs', this._boundObjs[eventName])
+		// get objects bound to this event
+		let boundObjs	= this._boundObjs[eventName];
+		if( boundObjs === undefined || boundObjs.length === 0 )	return;
+		// compute the intersection
+		let vector	= new THREE.Vector3( mouseX, mouseY, 0.5 );
+		this._ray.setFromCamera( vector, this._camera );
 
-	// notify handlers
-	this._notify(eventName, object3d, origDomEvent, intersect);
-};
-
-DomEvents.prototype._notify	= function(eventName, object3d, origDomEvent, intersect)
-{
-	var objectCtx	= this._objectCtxGet(object3d);
-	var handlers	= objectCtx ? objectCtx[eventName+'Handlers'] : null;
-	
-	// parameter check
-	console.assert(arguments.length === 4)
-
-	// do bubbling
-	if( !objectCtx || !handlers || handlers.length === 0 ){
-		object3d.parent && this._notify(eventName, object3d.parent, origDomEvent, intersect);
-		return;
-	}
-	
-	// notify all handlers
-	var handlers	= objectCtx[eventName+'Handlers'];
-	for(var i = 0; i < handlers.length; i++){
-		var handler	= handlers[i];
-		var toPropagate	= true;
-		handler.callback({
-			type		: eventName,
-			target		: object3d,
-			origDomEvent	: origDomEvent,
-			intersect	: intersect,
-			stopPropagation	: function(){
-				toPropagate	= false;
-			}
-		});
-		if( !toPropagate )	continue;
-		// do bubbling
-		if( handler.useCapture === false ){
-			object3d.parent && this._notify(eventName, object3d.parent, origDomEvent, intersect);
+		let intersects = null;
+		try {
+			intersects  = this._ray.intersectObjects( boundObjs );
+		} catch( e ){
+			this.clean();
+			this._onMove( eventName, mouseX, mouseY, origDomEvent );
+			return;
 		}
+
+		//console.log("RHinter ",eventName, " ", intersects );
+
+
+		// if there are no intersections, return now
+		if( intersects.length === 0 ) {
+			return;
+		}
+		// init some vairables
+		let intersect	= intersects[0];
+		let object3d	= intersect.object;
+		let objectCtx	= this._objectCtxGet(object3d);
+		if( !objectCtx )	return;
+
+		// notify handlers
+		if ( !object3d.geometry ){
+			return;
+		}
+
+		this._notify(eventName, object3d, origDomEvent, intersect);
+	},
+
+	_notify	: function( eventName, object3d, origDomEvent, intersect )
+	{
+		let objectCtx	= this._objectCtxGet( object3d );
+		let handlers	= objectCtx ? objectCtx[eventName+'Handlers'] : null;
+
+		// parameter check
+		console.assert(arguments.length === 4);
+
+		// do bubbling
+		if( !objectCtx || !handlers || handlers.length === 0 ){
+			object3d.parent && this._notify( eventName, object3d.parent, origDomEvent, intersect );
+			return;
+		}
+
+		// notify all handlers
+		handlers = objectCtx[eventName+'Handlers'];
+		let toPropagate	= true;
+
+		for( let i = 0; i < handlers.length; i++ ){
+			let handler	= handlers[i];
+			if ( typeof handler.callback === "function") {
+				handler.callback({
+					type: eventName,
+					target: object3d,
+					origDomEvent: origDomEvent,
+					intersect: intersect,
+					stopPropagation: function () {
+						toPropagate = false;
+					}
+				});
+			}
+			else if ( typeof handler.callback === "string" && typeof object3d.dispatchEvent === "function" ) {
+				object3d.dispatchEvent( handler.callback, {
+					type: eventName,
+					target: object3d,
+					origDomEvent: origDomEvent,
+					intersect: intersect,
+					stopPropagation: function () {
+						toPropagate = false;
+					}
+				});
+			}
+			if( !toPropagate ) continue;
+			// do bubbling
+			if( handler.useCapture === false ){
+				object3d.parent && this._notify( eventName, object3d.parent, origDomEvent, intersect );
+			}
+		}
+	},
+
+	/********************************************************************************/
+	/*		handle mouse events						*/
+	/********************************************************************************/
+	// # handle mouse events
+
+	_onMouseDown	: function( event ){
+		return this._onMouseEvent('mousedown', event);
+	},
+	_onMouseUp	: function( event ){
+		return this._onMouseEvent('mouseup'	, event);
+	},
+
+	_onMouseEvent	: function( eventName, domEvent )
+	{
+		let mouseCoords = this._getRelativeMouseXY( domEvent );
+		this._onEvent(eventName, mouseCoords.x, mouseCoords.y, domEvent);
+		//console.log("RH", eventName, mouseCoords.x, mouseCoords.y, domEvent);
+	},
+
+	_onMouseMove	: function( domEvent )
+	{
+		let mouseCoords = this._getRelativeMouseXY( domEvent );
+		this._onMove('mousemove', mouseCoords.x, mouseCoords.y, domEvent);
+		this._onMove('mouseover', mouseCoords.x, mouseCoords.y, domEvent);
+		this._onMove('mouseout' , mouseCoords.x, mouseCoords.y, domEvent);
+	},
+
+	_onClick		: function( event )
+	{
+		// TODO handle touch ?
+		this._onMouseEvent('click'	, event);
+	},
+
+	_onDblClick		: function( event )
+	{
+		// TODO handle touch ?
+		this._onMouseEvent('dblclick'	, event);
+	},
+
+	_onContextmenu	: function( event )
+	{
+		//TODO don't have a clue about how this should work with touch..
+		this._onMouseEvent('contextmenu'	, event);
+	},
+
+
+	/********************************************************************************/
+	/*		handle touch events						*/
+	/********************************************************************************/
+	// # handle touch events
+
+	_onTouchStart	: function( event ){
+
+		TOUCH_BEGIN = new Date().getTime();
+
+		TOUCH_POSX = event.touches[0].clientX;
+		TOUCH_POSY = event.touches[0].clientY;
+
+		TOUCH_TIMER = setTimeout(onlongtouch, touchduration);
+
+		return this._onTouchEvent('mousedown', event);
+	},
+
+	_onTouchEnd	: function(event){
+		const TOUCH_END = new Date().getTime();
+		const time = TOUCH_END - TOUCH_BEGIN;
+		const timesince = TOUCH_END - TOUCH_LATEST;
+		let evt;
+
+		if (event.touches.length > 1) {
+			return;
+		}
+
+		if (TOUCH_TIMER) {
+			clearTimeout(TOUCH_TIMER);
+		}
+
+		if( timesince < 500 && timesince > 0 ){
+			evt = new MouseEvent("dblclick", {
+				bubbles: true,
+				cancelable: true,
+				view: window,
+				clientX: TOUCH_POSX,
+				clientY: TOUCH_POSY,
+				offsetX: TOUCH_POSX,
+				offsetY: TOUCH_POSY,
+				pageX: TOUCH_POSX,
+				pageY: TOUCH_POSY
+			});
+			event.target.dispatchEvent(evt);
+			TOUCH_LATEST = new Date().getTime();
+			return this._onMouseEvent('mouseup', event);
+		} else {
+
+			if (time <= TOUCH_MS) {
+				evt = new MouseEvent("click", {
+					bubbles: true,
+					cancelable: true,
+					view: window,
+					clientX: TOUCH_POSX,
+					clientY: TOUCH_POSY,
+					offsetX: TOUCH_POSX,
+					offsetY: TOUCH_POSY,
+					pageX: TOUCH_POSX,
+					pageY: TOUCH_POSY
+				});
+				event.target.dispatchEvent(evt);
+				TOUCH_LATEST = new Date().getTime();
+				return this._onMouseEvent('mouseup', event);
+			}
+			else {
+				TOUCH_LATEST = new Date().getTime();
+				return this._onTouchEvent('mouseup', event);
+			}
+		}
+	},
+
+	_onTouchMove : function(domEvent)
+	{
+		if( domEvent.touches.length !== 1 )	return undefined;
+
+		domEvent.preventDefault();
+		let mouseX	= +(domEvent.touches[ 0 ].pageX / window.innerWidth ) * 2 - 1;
+		let mouseY	= -(domEvent.touches[ 0 ].pageY / window.innerHeight) * 2 + 1;
+
+		this._onMove('mousemove', mouseX, mouseY, domEvent);
+		this._onMove('mouseover', mouseX, mouseY, domEvent);
+		this._onMove('mouseout' , mouseX, mouseY, domEvent);
+	},
+
+	_onTouchEvent : function(eventName, domEvent)
+	{
+		if( domEvent.touches.length !== 1 )	return undefined;
+
+		domEvent.preventDefault();
+
+		let mouseX	= +(domEvent.touches[ 0 ].pageX / window.innerWidth ) * 2 - 1;
+		let mouseY	= -(domEvent.touches[ 0 ].pageY / window.innerHeight) * 2 + 1;
+		this._onEvent(eventName, mouseX, mouseY, domEvent);
 	}
-};
 
-/********************************************************************************/
-/*		handle mouse events						*/
-/********************************************************************************/
-// # handle mouse events
-
-DomEvents.prototype._onMouseDown	= function(event){ return this._onMouseEvent('mousedown', event);	}
-DomEvents.prototype._onMouseUp	= function(event){ return this._onMouseEvent('mouseup'	, event);	}
+});
 
 
-DomEvents.prototype._onMouseEvent	= function(eventName, domEvent)
-{
-	var mouseCoords = this._getRelativeMouseXY(domEvent);
-	this._onEvent(eventName, mouseCoords.x, mouseCoords.y, domEvent);
-};
-
-DomEvents.prototype._onMouseMove	= function(domEvent)
-{
-	var mouseCoords = this._getRelativeMouseXY(domEvent);
-	this._onMove('mousemove', mouseCoords.x, mouseCoords.y, domEvent);
-	this._onMove('mouseover', mouseCoords.x, mouseCoords.y, domEvent);
-	this._onMove('mouseout' , mouseCoords.x, mouseCoords.y, domEvent);
-};
-
-DomEvents.prototype._onClick		= function(event)
-{
-	// TODO handle touch ?
-	this._onMouseEvent('click'	, event);
-};
-DomEvents.prototype._onDblClick		= function(event)
-{
-	// TODO handle touch ?
-	this._onMouseEvent('dblclick'	, event);
-};
-
-DomEvents.prototype._onContextmenu	= function(event)
-{
-	//TODO don't have a clue about how this should work with touch..
-	this._onMouseEvent('contextmenu'	, event);
-};
-
-/********************************************************************************/
-/*		handle touch events						*/
-/********************************************************************************/
-// # handle touch events
-
-
-DomEvents.prototype._onTouchStart	= function(event){ return this._onTouchEvent('mousedown', event);	};
-DomEvents.prototype._onTouchEnd	= function(event){ return this._onTouchEvent('mouseup'	, event);	};
-
-DomEvents.prototype._onTouchMove	= function(domEvent)
-{
-	if( domEvent.touches.length != 1 )	return undefined;
-
-	domEvent.preventDefault();
-
-	var mouseX	= +(domEvent.touches[ 0 ].pageX / window.innerWidth ) * 2 - 1;
-	var mouseY	= -(domEvent.touches[ 0 ].pageY / window.innerHeight) * 2 + 1;
-	this._onMove('mousemove', mouseX, mouseY, domEvent);
-	this._onMove('mouseover', mouseX, mouseY, domEvent);
-	this._onMove('mouseout' , mouseX, mouseY, domEvent);
-};
-
-DomEvents.prototype._onTouchEvent	= function(eventName, domEvent)
-{
-	if( domEvent.touches.length != 1 )	return undefined;
-
-	domEvent.preventDefault();
-
-	var mouseX	= +(domEvent.touches[ 0 ].pageX / window.innerWidth ) * 2 - 1;
-	var mouseY	= -(domEvent.touches[ 0 ].pageY / window.innerHeight) * 2 + 1;
-	this._onEvent(eventName, mouseX, mouseY, domEvent);	
-};
+	onlongtouch = function() {
+		//console.log("longtouch");
+	};
 
 return DomEvents;
+
 });
 
 define("json!core/viewport/model.json", function(){ return {
@@ -1763,6 +816,7 @@ define('vendor/three/controls/OrbitControls',["three"], function(THREE){
  * @author alteredq / http://alteredqualia.com/
  * @author WestLangley / http://github.com/WestLangley
  * @author erich666 / http://erichaines.com
+ * @author ScieCode / http://github.com/sciecode
  */
 
 // This set of controls performs orbiting, dollying (zooming), and panning.
@@ -1805,7 +859,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 	// Set to true to enable damping (inertia)
 	// If damping is enabled, you must call controls.update() in your animation loop
 	this.enableDamping = false;
-	this.dampingFactor = 0.25;
+	this.dampingFactor = 0.05;
 
 	// This option actually enables dollying in and out; left as "zoom" for backwards compatibility.
 	// Set to false to disable zooming
@@ -1834,7 +888,10 @@ THREE.OrbitControls = function ( object, domElement ) {
 	this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
 
 	// Mouse buttons
-	this.mouseButtons = { LEFT: THREE.MOUSE.LEFT, MIDDLE: THREE.MOUSE.MIDDLE, RIGHT: THREE.MOUSE.RIGHT };
+	this.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.PAN };
+
+	// Touch fingers
+	this.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
 
 	// for reset
 	this.target0 = this.target.clone();
@@ -1910,8 +967,17 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 			}
 
-			spherical.theta += sphericalDelta.theta;
-			spherical.phi += sphericalDelta.phi;
+			if ( scope.enableDamping ) {
+
+				spherical.theta += sphericalDelta.theta * scope.dampingFactor;
+				spherical.phi += sphericalDelta.phi * scope.dampingFactor;
+
+			} else {
+
+				spherical.theta += sphericalDelta.theta;
+				spherical.phi += sphericalDelta.phi;
+
+			}
 
 			// restrict theta to be between desired limits
 			spherical.theta = Math.max( scope.minAzimuthAngle, Math.min( scope.maxAzimuthAngle, spherical.theta ) );
@@ -1928,7 +994,16 @@ THREE.OrbitControls = function ( object, domElement ) {
 			spherical.radius = Math.max( scope.minDistance, Math.min( scope.maxDistance, spherical.radius ) );
 
 			// move target to panned location
-			scope.target.add( panOffset );
+
+			if ( scope.enableDamping === true ) {
+
+				scope.target.addScaledVector( panOffset, scope.dampingFactor );
+
+			} else {
+
+				scope.target.add( panOffset );
+
+			}
 
 			offset.setFromSpherical( spherical );
 
@@ -2009,7 +1084,16 @@ THREE.OrbitControls = function ( object, domElement ) {
 	var startEvent = { type: 'start' };
 	var endEvent = { type: 'end' };
 
-	var STATE = { NONE: - 1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY_PAN: 4 };
+	var STATE = {
+		NONE: - 1,
+		ROTATE: 0,
+		DOLLY: 1,
+		PAN: 2,
+		TOUCH_ROTATE: 3,
+		TOUCH_PAN: 4,
+		TOUCH_DOLLY_PAN: 5,
+		TOUCH_DOLLY_ROTATE: 6
+	};
 
 	var state = STATE.NONE;
 
@@ -2270,7 +1354,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	}
 
-	function handleMouseUp( event ) {
+	function handleMouseUp( /*event*/ ) {
 
 		// console.log( 'handleMouseUp' );
 
@@ -2340,26 +1424,30 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		//console.log( 'handleTouchStartRotate' );
 
-		rotateStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
+		if ( event.touches.length == 1 ) {
 
-	}
+			rotateStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
 
-	function handleTouchStartDollyPan( event ) {
+		} else {
 
-		//console.log( 'handleTouchStartDollyPan' );
+			var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
+			var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
 
-		if ( scope.enableZoom ) {
-
-			var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-			var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
-
-			var distance = Math.sqrt( dx * dx + dy * dy );
-
-			dollyStart.set( 0, distance );
+			rotateStart.set( x, y );
 
 		}
 
-		if ( scope.enablePan ) {
+	}
+
+	function handleTouchStartPan( event ) {
+
+		//console.log( 'handleTouchStartPan' );
+
+		if ( event.touches.length == 1 ) {
+
+			panStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
+
+		} else {
 
 			var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
 			var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
@@ -2370,11 +1458,55 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	}
 
+	function handleTouchStartDolly( event ) {
+
+		//console.log( 'handleTouchStartDolly' );
+
+		var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
+		var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
+
+		var distance = Math.sqrt( dx * dx + dy * dy );
+
+		dollyStart.set( 0, distance );
+
+	}
+
+	function handleTouchStartDollyPan( event ) {
+
+		//console.log( 'handleTouchStartDollyPan' );
+
+		if ( scope.enableZoom ) handleTouchStartDolly( event );
+
+		if ( scope.enablePan ) handleTouchStartPan( event );
+
+	}
+
+	function handleTouchStartDollyRotate( event ) {
+
+		//console.log( 'handleTouchStartDollyRotate' );
+
+		if ( scope.enableZoom ) handleTouchStartDolly( event );
+
+		if ( scope.enableRotate ) handleTouchStartRotate( event );
+
+	}
+
 	function handleTouchMoveRotate( event ) {
 
 		//console.log( 'handleTouchMoveRotate' );
 
-		rotateEnd.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
+		if ( event.touches.length == 1 ) {
+
+			rotateEnd.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
+
+		} else {
+
+			var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
+			var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
+
+			rotateEnd.set( x, y );
+
+		}
 
 		rotateDelta.subVectors( rotateEnd, rotateStart ).multiplyScalar( scope.rotateSpeed );
 
@@ -2386,7 +1518,49 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		rotateStart.copy( rotateEnd );
 
-		scope.update();
+	}
+
+	function handleTouchMovePan( event ) {
+
+		//console.log( 'handleTouchMoveRotate' );
+
+		if ( event.touches.length == 1 ) {
+
+			panEnd.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
+
+		} else {
+
+			var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
+			var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
+
+			panEnd.set( x, y );
+
+		}
+
+		panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
+
+		pan( panDelta.x, panDelta.y );
+
+		panStart.copy( panEnd );
+
+	}
+
+	function handleTouchMoveDolly( event ) {
+
+		//console.log( 'handleTouchMoveRotate' );
+
+		var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
+		var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
+
+		var distance = Math.sqrt( dx * dx + dy * dy );
+
+		dollyEnd.set( 0, distance );
+
+		dollyDelta.set( 0, Math.pow( dollyEnd.y / dollyStart.y, scope.zoomSpeed ) );
+
+		dollyIn( dollyDelta.y );
+
+		dollyStart.copy( dollyEnd );
 
 	}
 
@@ -2394,43 +1568,23 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		//console.log( 'handleTouchMoveDollyPan' );
 
-		if ( scope.enableZoom ) {
+		if ( scope.enableZoom ) handleTouchMoveDolly( event );
 
-			var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-			var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
-
-			var distance = Math.sqrt( dx * dx + dy * dy );
-
-			dollyEnd.set( 0, distance );
-
-			dollyDelta.set( 0, Math.pow( dollyEnd.y / dollyStart.y, scope.zoomSpeed ) );
-
-			dollyIn( dollyDelta.y );
-
-			dollyStart.copy( dollyEnd );
-
-		}
-
-		if ( scope.enablePan ) {
-
-			var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
-			var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
-
-			panEnd.set( x, y );
-
-			panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
-
-			pan( panDelta.x, panDelta.y );
-
-			panStart.copy( panEnd );
-
-		}
-
-		scope.update();
+		if ( scope.enablePan ) handleTouchMovePan( event );
 
 	}
 
-	function handleTouchEnd( event ) {
+	function handleTouchMoveDollyRotate( event ) {
+
+		//console.log( 'handleTouchMoveDollyPan' );
+
+		if ( scope.enableZoom ) handleTouchMoveDolly( event );
+
+		if ( scope.enableRotate ) handleTouchMoveRotate( event );
+
+	}
+
+	function handleTouchEnd( /*event*/ ) {
 
 		//console.log( 'handleTouchEnd' );
 
@@ -2455,45 +1609,115 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		switch ( event.button ) {
 
-			case scope.mouseButtons.LEFT:
+			case 0:
 
-				if ( event.ctrlKey || event.metaKey || event.shiftKey ) {
+				switch ( scope.mouseButtons.LEFT ) {
 
-					if ( scope.enablePan === false ) return;
+					case THREE.MOUSE.ROTATE:
 
-					handleMouseDownPan( event );
+						if ( event.ctrlKey || event.metaKey || event.shiftKey ) {
 
-					state = STATE.PAN;
+							if ( scope.enablePan === false ) return;
 
-				} else {
+							handleMouseDownPan( event );
 
-					if ( scope.enableRotate === false ) return;
+							state = STATE.PAN;
 
-					handleMouseDownRotate( event );
+						} else {
 
-					state = STATE.ROTATE;
+							if ( scope.enableRotate === false ) return;
+
+							handleMouseDownRotate( event );
+
+							state = STATE.ROTATE;
+
+						}
+
+						break;
+
+					case THREE.MOUSE.PAN:
+
+						if ( event.ctrlKey || event.metaKey || event.shiftKey ) {
+
+							if ( scope.enableRotate === false ) return;
+
+							handleMouseDownRotate( event );
+
+							state = STATE.ROTATE;
+
+						} else {
+
+							if ( scope.enablePan === false ) return;
+
+							handleMouseDownPan( event );
+
+							state = STATE.PAN;
+
+						}
+
+						break;
+
+					default:
+
+						state = STATE.NONE;
 
 				}
 
 				break;
 
-			case scope.mouseButtons.MIDDLE:
 
-				if ( scope.enableZoom === false ) return;
+			case 1:
 
-				handleMouseDownDolly( event );
+				switch ( scope.mouseButtons.MIDDLE ) {
 
-				state = STATE.DOLLY;
+					case THREE.MOUSE.DOLLY:
+
+						if ( scope.enableZoom === false ) return;
+
+						handleMouseDownDolly( event );
+
+						state = STATE.DOLLY;
+
+						break;
+
+
+					default:
+
+						state = STATE.NONE;
+
+				}
 
 				break;
 
-			case scope.mouseButtons.RIGHT:
+			case 2:
 
-				if ( scope.enablePan === false ) return;
+				switch ( scope.mouseButtons.RIGHT ) {
 
-				handleMouseDownPan( event );
+					case THREE.MOUSE.ROTATE:
 
-				state = STATE.PAN;
+						if ( scope.enableRotate === false ) return;
+
+						handleMouseDownRotate( event );
+
+						state = STATE.ROTATE;
+
+						break;
+
+					case THREE.MOUSE.PAN:
+
+						if ( scope.enablePan === false ) return;
+
+						handleMouseDownPan( event );
+
+						state = STATE.PAN;
+
+						break;
+
+					default:
+
+						state = STATE.NONE;
+
+				}
 
 				break;
 
@@ -2592,23 +1816,67 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		switch ( event.touches.length ) {
 
-			case 1:	// one-fingered touch: rotate
+			case 1:
 
-				if ( scope.enableRotate === false ) return;
+				switch ( scope.touches.ONE ) {
 
-				handleTouchStartRotate( event );
+					case THREE.TOUCH.ROTATE:
 
-				state = STATE.TOUCH_ROTATE;
+						if ( scope.enableRotate === false ) return;
+
+						handleTouchStartRotate( event );
+
+						state = STATE.TOUCH_ROTATE;
+
+						break;
+
+					case THREE.TOUCH.PAN:
+
+						if ( scope.enablePan === false ) return;
+
+						handleTouchStartPan( event );
+
+						state = STATE.TOUCH_PAN;
+
+						break;
+
+					default:
+
+						state = STATE.NONE;
+
+				}
 
 				break;
 
-			case 2:	// two-fingered touch: dolly-pan
+			case 2:
 
-				if ( scope.enableZoom === false && scope.enablePan === false ) return;
+				switch ( scope.touches.TWO ) {
 
-				handleTouchStartDollyPan( event );
+					case THREE.TOUCH.DOLLY_PAN:
 
-				state = STATE.TOUCH_DOLLY_PAN;
+						if ( scope.enableZoom === false && scope.enablePan === false ) return;
+
+						handleTouchStartDollyPan( event );
+
+						state = STATE.TOUCH_DOLLY_PAN;
+
+						break;
+
+					case THREE.TOUCH.DOLLY_ROTATE:
+
+						if ( scope.enableZoom === false && scope.enableRotate === false ) return;
+
+						handleTouchStartDollyRotate( event );
+
+						state = STATE.TOUCH_DOLLY_ROTATE;
+
+						break;
+
+					default:
+
+						state = STATE.NONE;
+
+				}
 
 				break;
 
@@ -2633,23 +1901,45 @@ THREE.OrbitControls = function ( object, domElement ) {
 		event.preventDefault();
 		event.stopPropagation();
 
-		switch ( event.touches.length ) {
+		switch ( state ) {
 
-			case 1: // one-fingered touch: rotate
+			case STATE.TOUCH_ROTATE:
 
 				if ( scope.enableRotate === false ) return;
-				if ( state !== STATE.TOUCH_ROTATE ) return; // is this needed?
 
 				handleTouchMoveRotate( event );
 
+				scope.update();
+
 				break;
 
-			case 2: // two-fingered touch: dolly-pan
+			case STATE.TOUCH_PAN:
+
+				if ( scope.enablePan === false ) return;
+
+				handleTouchMovePan( event );
+
+				scope.update();
+
+				break;
+
+			case STATE.TOUCH_DOLLY_PAN:
 
 				if ( scope.enableZoom === false && scope.enablePan === false ) return;
-				if ( state !== STATE.TOUCH_DOLLY_PAN ) return; // is this needed?
 
 				handleTouchMoveDollyPan( event );
+
+				scope.update();
+
+				break;
+
+			case STATE.TOUCH_DOLLY_ROTATE:
+
+				if ( scope.enableZoom === false && scope.enableRotate === false ) return;
+
+				handleTouchMoveDollyRotate( event );
+
+				scope.update();
 
 				break;
 
@@ -2827,6 +2117,29 @@ Object.defineProperties( THREE.OrbitControls.prototype, {
 	}
 
 } );
+
+// This set of controls performs orbiting, dollying (zooming), and panning.
+// Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
+// This is very similar to OrbitControls, another set of touch behavior
+//
+//    Orbit - right mouse, or left mouse + ctrl/meta/shiftKey / touch: two-finger rotate
+//    Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
+//    Pan - left mouse, or arrow keys / touch: one-finger move
+
+THREE.MapControls = function ( object, domElement ) {
+
+	THREE.OrbitControls.call( this, object, domElement );
+
+	this.mouseButtons.LEFT = THREE.MOUSE.PAN;
+	this.mouseButtons.RIGHT = THREE.MOUSE.ROTATE;
+
+	this.touches.ONE = THREE.TOUCH.PAN;
+	this.touches.TWO = THREE.TOUCH.DOLLY_ROTATE;
+
+};
+
+THREE.MapControls.prototype = Object.create( THREE.EventDispatcher.prototype );
+THREE.MapControls.prototype.constructor = THREE.MapControls;
 
  return THREE.OrbitControls;
 });

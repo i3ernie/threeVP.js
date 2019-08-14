@@ -22,7 +22,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 	var _intersection = new THREE.Vector3();
 	var _worldPosition = new THREE.Vector3();
 	var _inverseMatrix = new THREE.Matrix4();
-	
+
 	var _selected = null, _hovered = null;
 
 	//
@@ -86,7 +86,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 
 		_raycaster.setFromCamera( _mouse, _camera );
 
-		var intersects = _raycaster.intersectObjects( _objects );
+		var intersects = _raycaster.intersectObjects( _objects, true );
 
 		if ( intersects.length > 0 ) {
 
@@ -124,7 +124,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 
 		_raycaster.setFromCamera( _mouse, _camera );
 
-		var intersects = _raycaster.intersectObjects( _objects );
+		var intersects = _raycaster.intersectObjects( _objects, true );
 
 		if ( intersects.length > 0 ) {
 
@@ -202,7 +202,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 
 		_raycaster.setFromCamera( _mouse, _camera );
 
-		var intersects = _raycaster.intersectObjects( _objects );
+		var intersects = _raycaster.intersectObjects( _objects, true );
 
 		if ( intersects.length > 0 ) {
 
