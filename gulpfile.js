@@ -10,10 +10,29 @@ var plugins = require('gulp-load-plugins')(); // Load all gulp plugins
                                               // them to the `plugins` object
 var _ = require('lodash');
 var fs = require('fs');
+const rollup  = require('rollup');
 
 var pkg = require('./package.json');
 var dirs = pkg.directories;
 var requireconfig = require("./config.json");
+
+const rollupBuild = function ( inputOptions, outputOptions, done ) {
+    // create a bundle
+    rollup.rollup(inputOptions).then( function( bundle ){
+
+        console.log( bundle.watchFiles ); // an array of file names this bundle depends on
+
+        // generate code
+        bundle.generate( outputOptions ).then( function( output ){
+
+            // or write the bundle to disk
+            bundle.write(outputOptions).then(function(){
+                done();
+            });
+        });
+
+    });
+};
 
 gulp.task('default', ( done ) => {
     // place code for your default task here
@@ -24,12 +43,13 @@ gulp.task('init', ( done ) => {
     var fnc = function( src, dest, req, name, mod )
     {
         var end = '';
+        
         fs.readFile( './node_modules/'+src, 'utf8', ( err, content ) => {
             if ( err ) { console.log( err ); return; }
             if ( typeof mod === "string" ) { end = "\n return " + mod + ';';  }
             var ret = ( typeof req === "string" )? 'define('+req+', function('+name+'){\n' + content + end + "\n});" : content;
             fs.writeFile(dest, ret, 'utf8', ( err ) => {
-                if ( err ) { console.log( err ); }
+                if ( err ) { console.log( "ERROR: ", err ); }
             });
         });
     };
@@ -91,4 +111,39 @@ gulp.task("build", ( done ) => {
     .pipe( gulp.dest( dirs.dist ) );
 
     return ret;
+});
+
+gulp.task('packThreeVPModule', function( done ){
+ 
+    rollupBuild( {
+        input: 'src/threeVP.js'
+    }, {
+        file: 'dist/threeVP.module.js',
+        exports : 'named',
+        format: 'es'
+    }, done );
+});
+
+gulp.task('packThreeVPUMD', function( done ){
+ 
+    rollupBuild( {
+        input: 'src/threeVP.js'
+    }, {
+        file: 'dist/threeVP.umd.js',
+        exports : 'named',
+        name: 'threeVP',
+        format: 'umd'
+    }, done );
+});
+
+gulp.task('packThreeVPAMD', function( done ){
+ 
+    rollupBuild( {
+        input: 'src/threeVP.js'
+    }, {
+        file: 'dist/threeVP.amd.js',
+        exports : 'named',
+     
+        format: 'amd'
+    }, done );
 });

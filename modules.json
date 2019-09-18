@@ -6,6 +6,9 @@
         "src" : "lodash/lodash.js",
         "dest" : "./src/vendor/lodash/lodash.js"
     },{
+        "src" : "lodash-es/lodash.js",
+        "dest" : "./src/vendor/lodash-es/lodash.js"
+    },{
         "src" : "lodash/lodash.min.js",
         "dest" : "./src/vendor/lodash/lodash.min.js"
     },{
@@ -71,34 +74,55 @@
         "src" : "three/build/three.js",
         "dest" : "./src/vendor/three/three.js"
     },{
+        "src" : "three/build/three.module.js",
+        "dest" : "./src/vendor/three/three.module.js"
+    },{
         "src" : "three/examples/js/renderers/Projector.js",
         "dest" : "./src/vendor/three/renderers/Projector.js",
         "req" : "[\"three\"]", "name" : "THREE",
         "mod" : "THREE.Projector"
+    },{
+        "src" : "three/examples/jsm/renderers/Projector.js",
+        "dest" : "./src/vendor/three/renderers/Projector.module.js"
     },{
         "src" : "three/examples/js/controls/OrbitControls.js",
         "dest" : "./src/vendor/three/controls/OrbitControls.js",
         "req" : "[\"three\"]", "name" : "THREE",
         "mod" : "THREE.OrbitControls"
     },{
+        "src" : "three/examples/jsm/controls/OrbitControls.js",
+        "dest" : "./src/vendor/three/controls/OrbitControls.module.js"
+    },{
         "src" : "three/examples/js/controls/DragControls.js",
         "dest" : "./src/vendor/three/controls/DragControls.js",
         "req" : "[\"three\"]", "name" : "THREE",
         "mod" : "THREE.DragControls"
+    },{
+        "src" : "three/examples/jsm/controls/DragControls.js",
+        "dest" : "./src/vendor/three/controls/DragControls.module.js"
     },{
         "src" : "three/examples/js/controls/OrthographicTrackballControls.js",
         "dest" : "./src/vendor/three/controls/OrthographicTrackballControls.js",
         "req" : "[\"three\"]", "name" : "THREE",
         "mod" : "THREE.OrthographicTrackballControls"
     },{
+        "src" : "three/examples/jsm/controls/OrthographicTrackballControls.js",
+        "dest" : "./src/vendor/three/controls/OrthographicTrackballControls.module.js"
+    },{
         "src" : "three/examples/js/controls/TrackballControls.js",
         "dest" : "./src/vendor/three/controls/TrackballControls.js",
         "req" : "[\"three\"]", "name" : "THREE",
         "mod" : "THREE.TrackballControls"
     },{
+        "src" : "three/examples/jsm/controls/TrackballControls.js",
+        "dest" : "./src/vendor/three/controls/TrackballControls.module.js"
+    },{
         "src" : "three/examples/js/controls/TransformControls.js",
         "dest" : "./src/vendor/three/controls/TransformControls.js",
         "req" : "[\"three\"]", "name" : "THREE",
         "mod" : "THREE.TransformControls"
+    },{
+        "src" : "three/examples/jsm/controls/TransformControls.js",
+        "dest" : "./src/vendor/three/controls/TransformControls.module.js"
     }
 ]
