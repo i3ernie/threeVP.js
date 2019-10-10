@@ -12,7 +12,9 @@
  * Date: 2019-05-01T21:04Z
  */
 
-var window = {};
+let module = {
+    exports : {}
+};
 
 ( function( global, factory ) {
 
@@ -10600,5 +10602,5 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-export default window;
+export default module.exports;
 

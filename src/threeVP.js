@@ -5,17 +5,21 @@
  */
 
 'use strict';
-import * as three from "./vendor/three/three.module";
-import * as _ from "../node_modules/lodash-es/lodash";
-import * as jq from "./vendor/jquery/jquery.module";
-
-let $ = jq.default;
+import * as three from "three/build/three.module.js";
+import * as _ from "lodash-es/lodash";
+import $ from "./vendor/jquery/jquery.es6.js";
+import async from "async-es/index.js";
+import ThreeBSP from "./vendor/threeCSG.es6.js";
+import Backbone from "backbone-es6/src/ModuleRuntime.js";
 
 let obj = {
-    three : three, 
-    _ : _,
-    $ : $
+    "three" : three, 
+    "_" : _,
+    "$" : $,
+    "Backbone" : Backbone,
+    "async" : async,
+    "ThreeBSP" : ThreeBSP
 };
 
-export {three, _, $}
+export {three, _, $, async, Backbone, ThreeBSP}
 export default obj;

@@ -14,21 +14,27 @@
   "dependencies": {
     "dat.gui": "^0.7.6",
     "gulp-rollup": "^2.16.2",
+    "rollup": "^1.23.1",
+    "rollup-plugin-alias": "^2.0.1",
     "stats-js": "^1.0.1"
   },
   "devDependencies": {
+    "ThreeCSG": "git://github.com/i3ernie/ThreeCSG.git",
+    "async-es": "latest",
     "babel": "latest",
     "babel-plugin-module-resolver-standalone": "latest",
     "backbone": "latest",
+    "backbone-es6": "git://github.com/typhonjs-backbone/backbone-es6.git",
     "backbone.radio": "latest",
     "customevent-polyfill": "git://github.com/d4tocchini/customevent-polyfill.git",
     "gulp": "^4.0.2",
+    "gulp-better-rollup": "^4.0.1",
     "gulp-load-plugins": "^2.0.1",
     "gulp-requirejs": "^1.3.0",
     "gulp-uglify": "^3.0.2",
     "i18n": "git://github.com/requirejs/i18n.git",
     "jquery": "^3.4.1",
-    "jquery-ui": "^1.12.1",
+    "less": "latest",
     "lodash": "^4.17.15",
     "lodash-es": "^4.17.15",
     "requirejs": "latest",
@@ -38,8 +44,11 @@
     "requirejs-less": "^0.1.5",
     "requirejs-plugins": "^1.0.2",
     "requirejs-text": "latest",
+    "rollup-plugin-amd": "^4.0.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
     "three": "^0.108.0",
     "tween.js": "^16.6.0",
+    "typhonjs-core-backbone-events": "git://github.com/typhonjs-backbone/typhonjs-core-backbone-events.git",
     "url": "latest"
   },
   "directories": {
@@ -57,6 +66,7 @@
   ],
   "scripts": {
     "build": "gulp build",
+    "buildBundles": "rollup -c",
     "init": "gulp init",
     "update": "npm update"
   }

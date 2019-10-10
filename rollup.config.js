@@ -3,7 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-export default [{
+
+import resolve from 'rollup-plugin-node-resolve';
+
+export default [/*{
   input: 'src/threeVP.js',
 //  external: ['three.module.js'],
   output: [
@@ -23,6 +26,13 @@ export default [{
         format: 'amd'
     }
   ]
+} , */{
+  input : 'src/libs/async.es.js',
+  output : [{
+    file: 'dist/async.bundle.js',
+    format: 'es'
+  }],
+  plugins: [ resolve() ]
 }
 ];
 

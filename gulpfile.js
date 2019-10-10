@@ -11,6 +11,10 @@ var plugins = require('gulp-load-plugins')(); // Load all gulp plugins
 var _ = require('lodash');
 var fs = require('fs');
 const rollup  = require('rollup');
+const gulpRollup  = require('gulp-better-rollup');
+const resolve =require('rollup-plugin-node-resolve');
+const alias  = require('rollup-plugin-alias');
+const sourcemaps = require('gulp-sourcemaps');
 
 var pkg = require('./package.json');
 var dirs = pkg.directories;
@@ -116,7 +120,17 @@ gulp.task("build", ( done ) => {
 gulp.task('packThreeVPModule', function( done ){
  
     rollupBuild( {
-        input: 'src/threeVP.js'
+        input: 'src/threeVP.js',
+        plugins: [ 
+            alias({
+                resolve: ['.jsx', '.js'], 
+                entries:[
+                  {find:'underscore', replacement: './../../lodash-es/lodash.js'}, 
+                  {find:'jquery', replacement: './../../../src/vendor/jquery/jquery.es6.js'}
+                ]
+            }),
+            resolve() 
+        ]
     }, {
         file: 'dist/threeVP.module.js',
         exports : 'named',
@@ -127,7 +141,8 @@ gulp.task('packThreeVPModule', function( done ){
 gulp.task('packThreeVPUMD', function( done ){
  
     rollupBuild( {
-        input: 'src/threeVP.js'
+        input: 'src/threeVP.js',
+        plugins: [ resolve() ]
     }, {
         file: 'dist/threeVP.umd.js',
         exports : 'named',
@@ -139,7 +154,8 @@ gulp.task('packThreeVPUMD', function( done ){
 gulp.task('packThreeVPAMD', function( done ){
  
     rollupBuild( {
-        input: 'src/threeVP.js'
+        input: 'src/threeVP.js',
+        plugins: [ resolve() ]
     }, {
         file: 'dist/threeVP.amd.js',
         exports : 'named',
@@ -147,3 +163,29 @@ gulp.task('packThreeVPAMD', function( done ){
         format: 'amd'
     }, done );
 });
+
+gulp.task('packAsyncModule', function( done ){
+ 
+    rollupBuild( {
+        input: 'src/libs/async.es.js',
+        plugins: [ resolve() ]
+    }, {
+        file: 'src/libs/async.pack.es.js',
+        exports : 'named',
+        format: 'es'
+    }, done );
+});
+
+gulp.task('bundleAsync', function( done ) {
+    gulp.src('./src/libs/async.es.js')
+    .pipe(sourcemaps.init())
+      // transform the files here.
+    .pipe( gulpRollup({
+        plugins: [ resolve() ]
+    },{
+        exports : 'named',
+        format: 'es'
+    }))
+    .pipe( gulp.dest('./dist') );
+    done();
+  });

@@ -28,7 +28,7 @@ define(["async", "json", "i18n", "es6", "base64", "vendor/base64",
     "less", "lessc", "libs/normalize", "events", 
     "url", "three", "lodash", "jquery", "backbone", 
     "cmd", "globals", "tween", "dat-gui", "plugin", "stats", 
-    "ThreeCSG", "vendor/require/normalize", 
+    "ThreeCSG.amd", "vendor/require/normalize", 
     "vendor/polyfill/CustomEvent", "vendor/polyfill/Function"
 ], 
 function( 
