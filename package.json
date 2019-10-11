@@ -45,6 +45,7 @@
     "requirejs-plugins": "^1.0.2",
     "requirejs-text": "latest",
     "rollup-plugin-amd": "^4.0.0",
+    "rollup-plugin-cjs-es": "^0.9.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "three": "^0.108.0",
     "tween.js": "^16.6.0",

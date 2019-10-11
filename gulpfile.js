@@ -15,6 +15,7 @@ const gulpRollup  = require('gulp-better-rollup');
 const resolve =require('rollup-plugin-node-resolve');
 const alias  = require('rollup-plugin-alias');
 const sourcemaps = require('gulp-sourcemaps');
+const cjs = require("rollup-plugin-cjs-es");
 
 var pkg = require('./package.json');
 var dirs = pkg.directories;
@@ -129,7 +130,12 @@ gulp.task('packThreeVPModule', function( done ){
                   {find:'jquery', replacement: './../../../src/vendor/jquery/jquery.es6.js'}
                 ]
             }),
-            resolve() 
+            cjs({
+                nested: false
+            }),
+            resolve({
+                preferBuiltins: false
+            }) 
         ]
     }, {
         file: 'dist/threeVP.module.js',

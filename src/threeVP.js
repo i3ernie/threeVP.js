@@ -11,6 +11,7 @@ import $ from "./vendor/jquery/jquery.es6.js";
 import async from "async-es/index.js";
 import ThreeBSP from "./vendor/threeCSG.es6.js";
 import Backbone from "backbone-es6/src/ModuleRuntime.js";
+import url from "url/url";
 
 let obj = {
     "three" : three, 
@@ -18,7 +19,8 @@ let obj = {
     "$" : $,
     "Backbone" : Backbone,
     "async" : async,
-    "ThreeBSP" : ThreeBSP
+    "ThreeBSP" : ThreeBSP,
+    url : url
 };
 
 export {three, _, $, async, Backbone, ThreeBSP}
