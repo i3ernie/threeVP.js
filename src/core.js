@@ -24,19 +24,22 @@
  * @returns {coreL#12.coreAnonym$1}
  */
 
-define(["async", "json", "i18n", "es6", "base64", "vendor/base64", 
-    "less", "lessc", "libs/normalize", "events", 
+define(["async", "json", "i18n", "es6", "base64", "cjs", "vendor/base64", "cjs!Url",
+    /*"less", "lessc", "libs/normalize", */
+    "events", 
     "url", "three", "lodash", "jquery", "backbone", 
     "cmd", "globals", "tween", "dat-gui", "plugin", "stats", 
-    "ThreeCSG.amd", "vendor/require/normalize", 
+    "ThreeCSG", "vendor/require/normalize", 
     "vendor/polyfill/CustomEvent", "vendor/polyfill/Function"
 ], 
 function( 
-    async, json, i18n, es6, base64, utilbase64, 
-    less, lessc, normalize, Events, 
+    async, json, i18n, es6, base64, cjs, utilbase64, Url,
+    /*'less, lessc, normalize,*/ 
+    Events, 
     URL, THREE, _, $, Backbone, 
     CMD, GLOBALS, TWEEN, dat, Plugin, Stats,
     ThreeCSG ) {
+        $.noConflict( true );
     return {
         "_"         : _,
         "$"         : $,
@@ -51,11 +54,12 @@ function(
         "TWEEN"     : TWEEN,
         "ThreeCSG"  : ThreeCSG,
         "URL"       : URL,
+        "Url"       : Url,
         "Stats"     : Stats,
         "base64"    : utilbase64,
         "requirejs" : {
             "json" : json,
-            "less" : less,
+        //    "less" : less,
             "i18n" : i18n,
             "es6"  : es6
         }
