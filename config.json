@@ -6,9 +6,8 @@
         "vendor"    : "vendor",
         "libs"      : "libs",
         
-        "lodash"        : "vendor/lodash/lodash",
-        "jquery"        : "vendor/jquery/jquery",
-        "jquery-private"    : "libs/jquery-private",
+        "lodash"        : "../node_modules/lodash/lodash",
+        "jquery"        : "vendor/jquery/dist/jquery",
         "backbone"      : "vendor/backbone/backbone",
         "underscore"    : "libs/underscore",
         "dat-gui"       : "vendor/dat.gui/dat.gui",
@@ -20,6 +19,8 @@
         
         "i18n"      : "vendor/require/i18n",
         "base64"    : "vendor/require/base64",
+        "amd-loader" : "../node_modules/amd-loader/amd-loader",
+        "cjs"       : "../node_modules/cjs/cjs",
         
         "es6"       : "vendor/require/es6",
         "babel"     : "vendor/require/babel.min",
@@ -30,25 +31,20 @@
         "lessc"     : "libs/lessc",
         
         "url"       : "core/URL", 
+        "Url"       : "../node_modules/url/url",
+        "punycode"  : "../node_modules/punycode/punycode",
+        "querystring" : "../node_modules/querystring/index",
        
         
-        "three"     : "vendor/three/three",
+        "three"     : "../node_modules/three/build/three",
         
         "Viewport"  : "core/viewport/Viewport",
         
         "cmd"       : "core/Command",
         "globals"   : "core/globals",
         "plugin"    : "core/Plugin",
-        "stats"     : "vendor/Stats",
-        "async"     : "vendor/async",
-        "ThreeCSG"  : "vendor/ThreeCSG"
-    },
-    
-    "map":{
-        "*" :{
-            "jquery"        : "jquery-private"
-        },
-
-        "jquery-private" :{"jquery" :"jquery"}
+        "stats"     : "../node_modules/stats-js/build/stats",
+        "async"     : "../node_modules/async/dist/async",
+        "ThreeCSG"  : "vendor/ThreeCSG.amd"
     }
 }

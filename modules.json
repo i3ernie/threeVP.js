@@ -1,8 +1,5 @@
 [
     {
-        "src" : "jquery/dist/jquery.js",
-        "dest" : "./src/vendor/jquery/jquery.js"
-    },{
         "src" : "lodash/lodash.js",
         "dest" : "./src/vendor/lodash/lodash.js"
     },{
@@ -55,6 +52,9 @@
     },{
         "src" : "babel-plugin-module-resolver-standalone/index.js",
         "dest" : "./src/vendor/require/babel-plugin-module-resolver.js"
+    },{
+        "src" : "simplebar/dist/simplebar.js",
+        "dest" : "./src/vendor/simplebar.js"
     },
     
     
@@ -84,7 +84,9 @@
     },{
         "src" : "three/examples/jsm/renderers/Projector.js",
         "dest" : "./src/vendor/three/renderers/Projector.module.js"
-    },{
+    },
+    
+    {
         "src" : "three/examples/js/controls/OrbitControls.js",
         "dest" : "./src/vendor/three/controls/OrbitControls.js",
         "req" : "[\"three\"]", "name" : "THREE",
@@ -101,14 +103,6 @@
         "src" : "three/examples/jsm/controls/DragControls.js",
         "dest" : "./src/vendor/three/controls/DragControls.module.js"
     },{
-        "src" : "three/examples/js/controls/OrthographicTrackballControls.js",
-        "dest" : "./src/vendor/three/controls/OrthographicTrackballControls.js",
-        "req" : "[\"three\"]", "name" : "THREE",
-        "mod" : "THREE.OrthographicTrackballControls"
-    },{
-        "src" : "three/examples/jsm/controls/OrthographicTrackballControls.js",
-        "dest" : "./src/vendor/three/controls/OrthographicTrackballControls.module.js"
-    },{
         "src" : "three/examples/js/controls/TrackballControls.js",
         "dest" : "./src/vendor/three/controls/TrackballControls.js",
         "req" : "[\"three\"]", "name" : "THREE",
@@ -124,5 +118,101 @@
     },{
         "src" : "three/examples/jsm/controls/TransformControls.js",
         "dest" : "./src/vendor/three/controls/TransformControls.module.js"
+    },
+    
+    {
+        "src" : "three/examples/js/loaders/ColladaLoader.js",
+        "dest" : "./src/vendor/three/loaders/ColladaLoader.js",
+        "req" : "[\"three\"]", "name" : "THREE",
+        "mod" : "THREE.ColladaLoader"
+    },{
+        "src" : "three/examples/js/loaders/GLTFLoader.js",
+        "dest" : "./src/vendor/three/loaders/GLTFLoader.js",
+        "req" : "[\"three\"]", "name" : "THREE",
+        "mod" : "THREE.GLTFLoader"
+    },{
+        "src" : "three/examples/js/loaders/OBJLoader.js",
+        "dest" : "./src/vendor/three/loaders/OBJLoader.js",
+        "req" : "[\"three\"]", "name" : "THREE",
+        "mod" : "THREE.OBJLoader"
+    },{
+        "src" : "three/examples/js/loaders/MTLLoader.js",
+        "dest" : "./src/vendor/three/loaders/MTLLoader.js",
+        "req" : "[\"three\"]", "name" : "THREE",
+        "mod" : "THREE.MTLLoader"
+    },{
+        "src" : "three/examples/js/loaders/STLLoader.js",
+        "dest" : "./src/vendor/three/loaders/STLLoader.js",
+        "req" : "[\"three\"]", "name" : "THREE",
+        "mod" : "THREE.STLLoader"
+    },{
+        "src" : "three/examples/js/loaders/DDSLoader.js",
+        "dest" : "./src/vendor/three/loaders/DDSLoader.js",
+        "req" : "[\"three\"]", "name" : "THREE",
+        "mod" : "THREE.DDSLoader"
+    },
+
+    {
+        "src" : "three/examples/js/curves/NURBSSurface.js",
+        "dest" : "./src/vendor/three/curves/NURBSSurface.js",
+        "req" : "[\"three\"]", "name" : "THREE",
+        "mod" : "THREE.NURBSSurface"
+    },{
+        "src" : "three/examples/js/curves/NURBSUtils.js",
+        "dest" : "./src/vendor/three/curves/NURBSUtils.js",
+        "req" : "[\"three\"]", "name" : "THREE",
+        "mod" : "THREE.NURBSUtils"
+    },{
+        "src" : "three/examples/js/curves/NURBSCurve.js",
+        "dest" : "./src/vendor/three/curves/NURBSCurve.js",
+        "req" : "[\"three\"]", "name" : "THREE",
+        "mod" : "THREE.NURBSCurve"
+    },
+    
+    {
+        "src" : "three/examples/js/postprocessing/RenderPass.js",
+        "dest" : "./src/vendor/three/postprocessing/RenderPass.js",
+        "req" : "[\"three\"]", "name" : "THREE",
+        "mod" : "THREE.RenderPass"
+    },{
+        "src" : "three/examples/js/shaders/SSAOShader.js",
+        "dest" : "./src/vendor/three/shaders/SSAOShader.js",
+        "req" : "[\"three\"]", "name" : "THREE",
+        "mod" : "THREE.SSAOShader"  
+    },{
+        "src" : "three/examples/js/postprocessing/EffectComposer.js",
+        "dest" : "./src/vendor/three/postprocessing/EffectComposer.js",
+        "req" : "[\"three\", \"shaders/CopyShader\", \"postprocessing/ShaderPass\"]", "name" : "THREE",
+        "mod" : "THREE.EffectComposer"  
+    },{
+        "src" : "three/examples/js/postprocessing/ShaderPass.js",
+        "dest" : "./src/vendor/three/postprocessing/ShaderPass.js",
+        "req" : "[\"three\", \"libs/Pass\"]", "name" : "THREE, Pass",
+        "mod" : "THREE.ShaderPass"  
+    },{
+        "src" : "three/examples/js/postprocessing/RenderPass.js",
+        "dest" : "./src/vendor/three/postprocessing/RenderPass.js",
+        "req" : "[\"three\", \"libs/Pass\"]", "name" : "THREE, Pass",
+        "mod" : "THREE.RenderPass"  
+    },{
+        "src" : "three/examples/js/postprocessing/OutlinePass.js",
+        "dest" : "./src/vendor/three/postprocessing/OutlinePass.js",
+        "req" : "[\"three\"]", "name" : "THREE",
+        "mod" : "THREE.OutlinePass"  
+    },{
+        "src" : "three/examples/js/shaders/FXAAShader.js",
+        "dest" : "./src/vendor/three/shaders/FXAAShader.js",
+        "req" : "[\"three\"]", "name" : "THREE",
+        "mod" : "THREE.FXAAShader"
+    },{
+        "src" : "three/examples/js/shaders/CopyShader.js",
+        "dest" : "./src/vendor/three/shaders/CopyShader.js",
+        "req" : "[\"three\"]", "name" : "THREE",
+        "mod" : "THREE.CopyShader"
+    },{
+        "src" : "three/examples/js/objects/Reflector.js",
+        "dest" : "./src/vendor/three/objects/Reflector.js",
+        "req" : "[\"three\"]", "name" : "THREE",
+        "mod" : "THREE.Reflector"
     }
 ]

@@ -1,0 +1,108 @@
+{
+    "baseUrl": "./src",
+
+    "paths": {
+        "core"      : "core",
+        "vendor"    : "vendor",
+        "libs"      : "libs",
+        "extras"    : "extras",
+        
+        "lodash"        : "../node_modules/lodash/lodash",
+        "jquery"        : "vendor/jquery/dist/jquery",
+        "backbone"      : "vendor/backbone/backbone",
+        "underscore"    : "libs/underscore",
+        "dat-gui"       : "vendor/dat.gui/dat.gui",
+        "tween"         : "vendor/Tween",
+        "events"        : "libs/Events",
+        
+        "json"      : "vendor/require/json",
+        "text"      : "vendor/require/text",
+        
+        "i18n"      : "vendor/require/i18n",
+        "base64"    : "vendor/require/base64",
+        "img64"     : "extras/require/img64",
+        "less"      : "extras/require/less",
+        "amd-loader" : "../node_modules/amd-loader/amd-loader",
+        "cjs"       : "../node_modules/cjs/cjs",
+        
+        "es6"       : "vendor/require/es6",
+        "babel"     : "vendor/require/babel.min",
+        "babel-plugin-module-resolver" : "vendor/require/babel-plugin-module-resolver",
+
+        "md5"   : "vendor/md5/md5",
+        
+        
+        
+        "url"       : "core/URL", 
+        "Url"       : "../node_modules/url/url",
+        "punycode"  : "../node_modules/punycode/punycode",
+        "querystring" : "../node_modules/querystring/index",
+       
+        
+        "three"             : "../node_modules/three/build/three",
+        "postprocessing"    : "vendor/three/postprocessing",
+        "shaders"           : "vendor/three/shaders",
+        "threeVP-Interactive" : "vendor/threeVP/threeVP-Interactive",
+        
+        "Viewport"  : "core/viewport/Viewport",
+        
+        "cmd"       : "core/Command",
+        "globals"   : "core/globals",
+        "plugin"    : "core/Plugin",
+        "stats"     : "../node_modules/stats-js/build/stats",
+        "async"     : "../node_modules/async/dist/async",
+        "ThreeCSG"  : "vendor/ThreeCSG.amd",
+        
+        "LoaderSupport"     : "vendor/three/loaders/LoaderSupport",
+        "loader"            : "extras/loaders/Loader",
+        "ColladaLoader"     : "extras/loaders/ColladaLoader",
+        "GLTFLoader"        : "extras/loaders/GLTFLoader",
+        "OBJLoader"         : "extras/loaders/OBJLoader",
+        "POVLoader"         : "extras/loaders/POVLoader",
+        "X3DLoader"         : "extras/loaders/X3DLoader",
+        "MTLLoader"         : "extras/loaders/MTLLoader",
+        "OBJMTLLoader"      : "extras/loaders/OBJMTLLoader",
+        "JSONLoader"        : "extras/loaders/JSONLoader",
+        "STLLoader"         : "extras/loaders/STLLoader",
+        "UniversalLoader"   : "extras/loaders/UniversalLoader",
+        "ThreeJSONLoader"   : "extras/loaders/ThreeJSONLoader",
+        "UTF8Loader"        : "extras/loaders/UTF8Loader",
+        "DDSLoader"         : "vendor/three/loaders/DDSLoader",
+
+        "NURBSSurface"       : "vendor/three/curves/NURBSSurface",
+        "NURBSUtils"         : "vendor/three/curves/NURBSUtils",
+        "NURBSCurve"         : "vendor/three/curves/NURBSCurve",
+        
+        "utilities"       : "extras/utilities",
+        
+        "Interactive"       : "extras/interfaces/Interactive",
+        "Draggable"         : "extras/interfaces/Draggable",
+        
+        "OrbitControls"     : "vendor/three/controls/OrbitControls",
+        "TrackballControls" : "vendor/three/controls/TrackballControls",
+        
+        "ObjectDAE"         : "extras/objects/ObjectDAE",
+        "ObjectX3D"         : "extras/objects/ObjectX3D",
+        "ObjectOBJ"         : "extras/objects/ObjectOBJ",
+        "ObjectOBJMTL"      : "extras/objects/ObjectOBJMTL",
+
+        "shaders/CopyShader"        : "vendor/three/shaders/CopyShader",
+        "shaders/FXAAShader"        : "vendor/three/shaders/FXAAShader",
+
+        "postprocessing/EffectComposer" : "vendor/three/postprocessing/EffectComposer", 
+        "postprocessing/RenderPass"     : "vendor/three/postprocessing/RenderPass", 
+        "postprocessing/OutlinePass"    : "vendor/three/postprocessing/OutlinePass",
+        "postprocessing/ShaderPass"     : "vendor/three/postprocessing/ShaderPass",
+
+        "objects/Reflector" : "vendor/three/objects/Reflector",
+        "simplebar"         : "vendor/simplebar",
+
+        "effects/VREffect"              : "vendor/three/effects/VREffect",
+
+        "threex/loop"           : "extras/threex/loop",
+        "threex/domevents"      : "extras/threex/domevents",
+        "threex/volumetricspotlightmaterial" : "extras/threex/threex.volumetricspotlightmaterial",
+
+        "fontawesome" : "vendor/fontawesome/all"
+    }
+}
