@@ -12,12 +12,12 @@ var _ = require('lodash');
 var fs = require('fs');
 const rollup  = require('rollup');
 const resolve =require('rollup-plugin-node-resolve');
-const alias  = require('rollup-plugin-alias');
+const alias  = require('@rollup/plugin-alias');
 const sourcemaps = require('gulp-sourcemaps');
 const cjs = require("rollup-plugin-cjs-es");
 
 const rollup_amd = require( 'rollup-plugin-amd' );
-const rollup_legacy = require( 'rollup-plugin-legacy');
+const rollup_legacy = require( '@rollup/plugin-legacy');
 
 const task_onpla = require('./build/build_onpla');
 const task_core = require('./build/build_core');
