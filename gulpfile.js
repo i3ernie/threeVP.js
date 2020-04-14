@@ -15,12 +15,14 @@ const resolve =require('rollup-plugin-node-resolve');
 const alias  = require('rollup-plugin-alias');
 const sourcemaps = require('gulp-sourcemaps');
 const cjs = require("rollup-plugin-cjs-es");
+
 const rollup_amd = require( 'rollup-plugin-amd' );
 const rollup_legacy = require( 'rollup-plugin-legacy');
 
 const task_onpla = require('./build/build_onpla');
 const task_core = require('./build/build_core');
 const task_viewport = require('./build/build_viewport');
+const init_modules = require('./build/init_modules');
 
 var pkg = require('./package.json');
 var dirs = pkg.directories;
@@ -52,26 +54,7 @@ gulp.task('task_onpla', task_onpla);
 
 gulp.task('init', ( done ) => {
     
-    var fnc = function( src, dest, req, name, mod )
-    {
-        var end = '';
-        
-        fs.readFile( './node_modules/'+src, 'utf8', ( err, content ) => {
-            if ( err ) { console.log( err ); return; }
-            if ( typeof mod === "string" ) { end = "\n return " + mod + ';';  }
-            var ret = ( typeof req === "string" )? 'define('+req+', function('+name+'){\n' + content + end + "\n});" : content;
-            fs.writeFile(dest, ret, 'utf8', ( err ) => {
-                if ( err ) { console.log( "ERROR: ", err ); }
-            });
-        });
-    };
-    
-    var modules = require("./modules.json");
-    
-    _.each(modules, ( el ) =>{ 
-        fnc(el.src, el.dest, el.req , el.name, el.mod);
-    });    
-    done();
+    init_modules( done );   
     
 });
 
@@ -188,17 +171,3 @@ gulp.task('packAsyncModule', function( done ){
         
     });
 });
-
-gulp.task('bundleAsync', function( done ) {
-    gulp.src('./src/libs/async.es.js')
-    .pipe(sourcemaps.init())
-      // transform the files here.
-    .pipe( gulpRollup({
-        plugins: [ resolve() ]
-    },{
-        exports : 'named',
-        format: 'es'
-    }))
-    .pipe( gulp.dest('./dist') );
-    done();
-  });
