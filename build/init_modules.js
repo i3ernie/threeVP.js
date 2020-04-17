@@ -24,6 +24,7 @@ const init_modules = function( done ){
     };
     
     _.each(modules, ( el ) =>{ 
+        console.log( el.src + "  ->  " + el.dest + ( el.name? " define(" +el.req+ ", function(" +el.name+ ") {" : "") + ( el.mod? " return "+el.mod+"; })" : "}") );
         fnc(el.src, el.dest, el.req , el.name, el.mod);
     });    
     done();

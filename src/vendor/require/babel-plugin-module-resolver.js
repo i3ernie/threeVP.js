@@ -1,23 +1,21 @@
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);
-  } else if (typeof exports === "object") {
+  } else if (typeof exports === 'object') {
     exports = factory();
   } else {
     root.moduleResolver = factory();
   }
 })(this, function () {
-  'use strict'
-
   function resolvePath (nodePath, state) {
     if (!state.types.isStringLiteral(nodePath)) {
       return;
     }
   
-    const sourcePath = nodePath.node.value;
-    const currentFile = state.file.opts.sourceFileName;
+    var sourcePath = nodePath.node.value;
+    var currentFile = state.file.opts.sourceFileName;
   
-    const modulePath = state.opts.resolvePath(sourcePath, currentFile, state.opts);
+    var modulePath = state.opts.resolvePath(sourcePath, currentFile, state.opts);
     if (modulePath) {
       if (nodePath.node.pathResolved) {
         return;
@@ -52,12 +50,12 @@
     resolvePath(nodePath.get('source'), state);
   }
   
-  const importVisitors = {
+  var importVisitors = {
     CallExpression: transformCall,
     'ImportDeclaration|ExportDeclaration': transformImport
   };
   
-  const visitor = {
+  var visitor = {
     Program: {
       enter: function (programPath, state) {
         programPath.traverse(importVisitors, state);
@@ -78,7 +76,7 @@
         this.moduleResolverVisited = {};
       },
   
-      visitor,
+      visitor: visitor,
 
       post: function () {
         this.moduleResolverVisited = null;

@@ -15,16 +15,21 @@ const dirs = pkg.directories;
 const requireconfig = require("../config_onpla.json");
 
 const task_onpla = function( done ){
-plugins.requirejs(
+    const name = "vendor/require/require";
+    const out = "require.js";
+    
+    plugins.requirejs (
         _.extend({}, requireconfig,
             {
-                "name"      : "vendor/require/require",
+                "name"      : name,
                 "exclude"   : [],
-                "out"       : "require.js",
-                "include" : ["underscore", "OKP"]
+                "out"       : out,
+                "include" : ["underscore", "OKP", "i18n"]
             })
         ).on( "error", console.log )
     .pipe( gulp.dest( dirs.dist ) );
+    
+    console.log( dirs.dist + "/" + out );
     
     done();
 };

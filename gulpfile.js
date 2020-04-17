@@ -23,6 +23,7 @@ const task_onpla = require('./build/build_onpla');
 const task_core = require('./build/build_core');
 const task_viewport = require('./build/build_viewport');
 const init_modules = require('./build/init_modules');
+const packThreeVPModule = require('./build/build_threeVPModule');
 
 var pkg = require('./package.json');
 var dirs = pkg.directories;
@@ -66,36 +67,7 @@ gulp.task("build", ( done ) => {
     
 });
 
-gulp.task('packThreeVPModule', function( done ){
- 
-    return rollup.rollup({
-        input: 'src/threeVP.es6.js',
-        plugins: [ 
-            alias({
-                resolve: ['.jsx', '.js'], 
-                entries:[
-                  {find:'underscore', replacement: './../../lodash-es/lodash.js'}, 
-                  {find:'jquery', replacement: 'node_modules/jquery/src/jquery.js'}
-                ]
-            }),
-            rollup_amd(),
-            rollup_legacy({
-                "node_modules/url/url.js" : 'url'
-            }),
-            resolve()
-            
-        ]
-    })
-    .then(( bundle ) => {
-        return bundle.write({
-            file:"dist/threeVP.es.js",
-            format: 'es', 
-            name: 'threeVP',
-            exports: 'named'
-    })
-        
-    });
-});
+gulp.task('packThreeVPModule', packThreeVPModule );
 
 
 gulp.task('packThreeVPUMD', function( done ){
@@ -170,4 +142,11 @@ gulp.task('packAsyncModule', function( done ){
     });
         
     });
+});
+
+gulp.task('make', function( done ){
+    let file = process.env.npm_package_config_packs + ".json";
+    const conf = require( "./" + file );
+    console.log("make...", conf);
+    done();
 });

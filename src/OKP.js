@@ -2,7 +2,6 @@
  * 
  * @param {type} async
  * @param {type} json
- * @param {type} i18n
  * @param {type} es6
  * @param {type} base64
  * @param {type} utilbase64
@@ -24,7 +23,7 @@
  * @returns {coreL#12.coreAnonym$1}
  */
 
-define(["async", "text", "json", "i18n", "base64", "img64",/*"es6", */"cjs", "vendor/base64", //"cjs!Url",
+define(["async", "text", "json", "base64", "img64",/*"es6", */"cjs", "vendor/base64", //"cjs!Url",
     "less",/* "lessc", "libs/normalize", */
     "events", 
     "url", "three", "lodash", "jquery", "backbone", 
@@ -56,7 +55,7 @@ define(["async", "text", "json", "i18n", "base64", "img64",/*"es6", */"cjs", "ve
     "fontawesome"
 ], 
 function( 
-    async, text, json, i18n, base64, img64, /*es6,*/cjs, utilbase64, //Url,
+    async, text, json, base64, img64, /*es6,*/cjs, utilbase64, //Url,
     less, /* lessc, normalize,*/ 
     Events, 
     URL, THREE, _, $, Backbone, 
@@ -110,9 +109,8 @@ function(
             "text" : text,
             "base64" : base64,
             "img64" : img64,
-            "less" : less,
-            "i18n" : i18n
-        //    ,"es6"  : es6
+            "less" : less
+        
         },
         
         "loader" : {

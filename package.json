@@ -41,6 +41,7 @@
     "gulp-load-plugins": "latest",
     "gulp-requirejs": "latest",
     "gulp-rollup": "latest",
+    "gulp-sourcemaps": "latest",
     "gulp-uglify": "^3.0.2",
     "lodash": "latest",
     "lodash-es": "latest",
@@ -71,10 +72,14 @@
     "dist/core.min.js",
     "package.json"
   ],
+  "config" : {
+    "packs" : "config_packs"
+  },
   "scripts": {
     "build": "gulp build",
     "buildBundles": "rollup -c",
     "init": "gulp init",
-    "update": "npm update"
+    "update": "npm update",
+    "make" : "gulp make"
   }
 }
