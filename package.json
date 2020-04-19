@@ -72,14 +72,14 @@
     "dist/core.min.js",
     "package.json"
   ],
-  "config" : {
-    "packs" : "config_packs"
+  "config": {
+    "packs": "config_packs"
   },
   "scripts": {
     "build": "gulp build",
     "buildBundles": "rollup -c",
     "init": "gulp init",
     "update": "npm update",
-    "make" : "gulp make"
+    "make": "gulp make"
   }
 }
