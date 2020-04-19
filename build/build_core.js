@@ -25,19 +25,27 @@ const task_core = function( done ){
                 "include" : ["underscore", "core"]
             })
         ).on("error", console.error)
-    .pipe( gulp.dest( dirs.dist ) );
-    
-    plugins.requirejs(
-        _.extend({}, requireconfig,
-            {
-                "name"      : "vendor/require/require",
-                "exclude"   : [],
-                "out"       : "core.min.js",
-                "include" : ["underscore", "core"]
-            })
-        ).on("error", console.error)
-    .pipe( plugins.uglify() )
-    .pipe( gulp.dest( dirs.dist ) );
+    .pipe( gulp.dest( dirs.dist ) )
+    .on('end', function(){
+
+        plugins.requirejs(
+            _.extend({}, requireconfig,
+                {
+                    "name"      : "vendor/require/require",
+                    "exclude"   : [],
+                    "out"       : "core.min.js",
+                    "include" : ["underscore", "core"]
+                })
+            ).on("error", console.error)
+    // .pipe( plugins.uglify() )
+        .pipe( gulp.dest( dirs.dist ) )
+        .on('end', function(){
+            console.log("made: " + dirs.dist + "/core.js" );
+            done();
+        });
+
+        
+    });
 };
 
 module.exports = task_core;

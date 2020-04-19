@@ -61,13 +61,14 @@ gulp.task('init', ( done ) => {
 
 gulp.task("build", ( done ) => {
     "use strict";
-    task_viewport( ()=>{
+    task_onpla( ()=>{
         task_core( done );
     });
     
 });
 
 gulp.task('packThreeVPModule', packThreeVPModule );
+gulp.task('buildCore', task_core );
 
 
 gulp.task('packThreeVPUMD', function( done ){

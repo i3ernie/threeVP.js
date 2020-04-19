@@ -27,11 +27,12 @@ const task_onpla = function( done ){
                 "include" : ["underscore", "OKP", "i18n"]
             })
         ).on( "error", console.log )
-    .pipe( gulp.dest( dirs.dist ) );
+    .pipe( gulp.dest( dirs.dist ) )
+    .on( 'end', function(){
+        console.log( "made: " + dirs.dist + "/" + out );
+        done();
+    });
     
-    console.log( dirs.dist + "/" + out );
-    
-    done();
 };
 
 module.exports = task_onpla;
