@@ -9,11 +9,10 @@ var plugins = require('gulp-load-plugins')(); // Load all gulp plugins
                                               // automatically and attach
                                               // them to the `plugins` object
 var _ = require('lodash');
-var fs = require('fs');
 const rollup  = require('rollup');
 const resolve =require('rollup-plugin-node-resolve');
 const alias  = require('@rollup/plugin-alias');
-const sourcemaps = require('gulp-sourcemaps');
+
 const cjs = require("rollup-plugin-cjs-es");
 
 const rollup_amd = require( 'rollup-plugin-amd' );
@@ -24,6 +23,7 @@ const task_core = require('./build/build_core');
 const task_viewport = require('./build/build_viewport');
 const init_modules = require('./build/init_modules');
 const packThreeVPModule = require('./build/build_threeVPModule');
+const task_threeVPUMD = require('./build/build_threeVPUMD');
 
 var pkg = require('./package.json');
 var dirs = pkg.directories;
@@ -70,37 +70,7 @@ gulp.task("build", ( done ) => {
 gulp.task('packThreeVPModule', packThreeVPModule );
 gulp.task('buildCore', task_core );
 
-
-gulp.task('packThreeVPUMD', function( done ){
- 
-    return rollup.rollup({
-        input: 'src/threeVP.es6.js',
-        plugins: [ 
-            alias({
-                resolve: ['.jsx', '.js'], 
-                entries:[
-                  {find:'underscore', replacement: './../../lodash-es/lodash.js'},
-                  {find:'jquery', replacement: 'node_modules/jquery/src/jquery.js'}
-                ]
-            }),
-            rollup_legacy({
-                "node_modules/url/url.js" : 'url',
-                "node_modules/tween.js/src/Tween" : "Tween"
-            }),
-            rollup_amd(),
-            resolve() 
-        ]
-    })
-    .then(( bundle ) => {
-        return bundle.write({
-            file:"dist/threeVP.umd.js",
-            format: 'umd', 
-            name: 'threeVP',
-            exports: 'named'
-    })
-        
-    });
-});
+gulp.task('packThreeVPUMD', task_threeVPUMD );
 
 gulp.task('packThreeVPAMD', function( done ){
  
