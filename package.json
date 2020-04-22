@@ -81,5 +81,8 @@
     "init": "gulp init",
     "update": "npm update",
     "make": "gulp make"
-  }
+  },
+  "publishConfig": { 
+    "registry": "https://npm.pkg.github.com/" 
+  } 
 }
