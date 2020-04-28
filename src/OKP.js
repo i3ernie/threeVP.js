@@ -26,7 +26,7 @@
 define(["async", "text", "json", "base64", "img64",/*"es6", */"cjs", "vendor/base64", //"cjs!Url",
     "less",/* "lessc", "libs/normalize", */
     "events", 
-    "url", "three", "lodash", "jquery", "backbone", 
+    "url", "three", "lodash", "jquery", "backbone", "marionette",
     "cmd", "globals", "tween", "dat-gui", "plugin", "stats", 
     "md5",
     "simplebar",
@@ -58,7 +58,7 @@ function(
     async, text, json, base64, img64, /*es6,*/cjs, utilbase64, //Url,
     less, /* lessc, normalize,*/ 
     Events, 
-    URL, THREE, _, $, Backbone, 
+    URL, THREE, _, $, Backbone, Marionette,
     CMD, GLOBALS, TWEEN, dat, Plugin, Stats,
     md5,
     simplebar,
@@ -88,6 +88,7 @@ function(
         "$"         : $,
         "async"     : async,
         "Backbone"  : Backbone,
+        "Marionette" : Marionette,
         "CMD"       : CMD,
         "dat"       : dat,
         "Events"    : Events,

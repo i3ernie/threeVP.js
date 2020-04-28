@@ -10,6 +10,8 @@
         "lodash"        : "../node_modules/lodash/lodash",
         "jquery"        : "vendor/jquery/dist/jquery",
         "backbone"      : "vendor/backbone/backbone",
+        "marionette"      : "../node_modules/backbone.marionette/lib/backbone.marionette",
+        "backbone.radio" :"../node_modules/backbone.radio/build/backbone.radio",
         "underscore"    : "libs/underscore",
         "dat-gui"       : "vendor/dat.gui/dat.gui",
         "tween"         : "vendor/Tween",
